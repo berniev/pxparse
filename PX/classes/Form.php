@@ -61,7 +61,7 @@ abstract class Form
     /** @var int */
     public $numRegularFields = 0;
     /** @var int */
-    public $numOtherFields = 0;
+    public $numOtherFields = 0; 
 
     /**
      * @param string $tableName
