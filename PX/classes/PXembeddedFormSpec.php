@@ -23,24 +23,34 @@ class PXembeddedFormSpec
 
     /** @var  string */
     public $type = '';
+
     /** @var string */
     public $tableName = '';
+
     /** @var string */
     public $database = '';
+
     /** @var string */
     public $form = '';
+
     /** @var int */
     public $formNum = 0;
+
     /** @var string */
     public $tableForm = '';
+
     /** @var int */
     public $pageNum = 0;
+
     /** @var int */
     public $y = 0;
+
     /** @var int */
     public $x = 0;
+
     /** @var string */
     public $isLinked = '';
+
     /** @var int */
     public $numLinkFields = 0;
 
