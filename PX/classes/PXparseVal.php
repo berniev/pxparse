@@ -132,6 +132,7 @@ class PXparseVal extends PXparse
             $this->results[] = $res;
         }
         $this->Close();
+        return $this->results;
     }
 
     public function Draw()
