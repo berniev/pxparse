@@ -21,44 +21,33 @@ namespace PX\classes;
 class Settings
 {
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $posn = '';
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $num = 0;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $name = '';
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $type = '';
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $len = '';
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $dunno1 = '';
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $dispLen1 = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $dispLen2 = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $dunno2 = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $decPlaces = 0;
 }
