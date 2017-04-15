@@ -21,27 +21,49 @@ namespace PX\classes;
 class PXformHeader
 {
 
+    /** @var int */
     public $type = 0;
+    /** @var string */
     public $dunno0 = '';
+    /** @var string */
     public $desc = '';
+    /** @var int */
     public $dunno1 = 0;
+    /** @var int */
     public $formExtentY = 0;
+    /** @var int */
     public $formExtentX = 0;
+    /** @var string */
     public $chunk = '';
+    /** @var string */
     public $dunno2 = '';
+    /** @var int */
     public $repeatCount = 0;
+    /** @var int */
     public $repeatLines = 0;
+    /** @var int */
     public $dunno3 = 0;
+    /** @var int */
     public $repeatExtentY = 0;
+    /** @var int */
     public $repeatExtentX = 0;
+    /** @var string */
     public $dunno4 = '';
+    /** @var int */
     public $embeddedFormsCount = 0;
+    /** @var string */
     public $dunno5 = '';
+    /** @var string */
     public $gap = '';
+    /** @var int */
     public $tableFieldsPlusSomething = 0;
+    /** @var string */
     public $dunno6 = '';
+    /** @var int */
     public $numPages = 0;
+    /** @var int */
     public $regularFields = 0;
+    /** @var int */
     public $otherFields = 0;
 
 }

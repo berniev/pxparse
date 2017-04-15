@@ -39,18 +39,25 @@ class PXformPage
     /** @var array */
     public $fldStyles;
 
+    /** @var int */
     public $primaryFieldsMaybe = 0;
 
+    /** @var int */
     public $linesPerPage = 0;
 
+    /** @var string */
     public $dunno1 = '';
 
+    /** @var int */
     public $dunno2 = 0;
 
+    /** @var int */
     public $numRegularFields = 0;
 
+    /** @var int */
     public $numOtherFields = 0;
 
+    /** @var null */
     public $header = null;
 
     public function __Construct($num)
