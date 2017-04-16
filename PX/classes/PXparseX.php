@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -14,59 +13,63 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Just to get primary key field names
  */
 
 namespace PX\classes;
 
-class PXparseDb extends PXparse
+class PXparseX extends PXparse
 {
 
     /** @var TableSpecs */
     public $table = [];
 
+    /** @var [] */
+    public $indexFields = [];
+
     /** @var FieldSpecs[] */
-    public $fields = [];
+    public $primaryKeyFields = [];
+
+    /** @var array */
+    public $results = [];
+
+    /** @var string */
+    public $indexName = '';
 
     public function ParseFile($fName)
     {
         if ( ! $this->Open($fName, false)) {
             return false;
         }
-
         list($this->table, $specs, $names, $nums) = $this->ParseDataHeader();
+        $this->indexName = $this->ReadNullTermString();
 
-
-        $this->fields = [];
-        for ($i = 0; $i < $this->table->numFields; $i++) {
-            $field = new FieldSpecs;
-            $field->name = $names[$i];
-            $field->type = $specs[$i]['type'];
-            $field->len = $specs[$i]['len'];
-            $field->num = $nums[$i];
-            $this->fields[] = $field;
+        array_pop($names); // 'Hint'
+        $this->indexFields = [];
+        foreach ($names as $name) {
+            $this->indexFields[] = $name;
         }
-        $this->table->isKeyed = $this->table->fileType == '02' ? 0 : 1; // 0x04
-        if ($this->table->isKeyed) {
-            for ($i = 0; $i < $this->table->numKeyFields; $i++) {
-                $this->fields[$i]->isKey = 1;
-            }
+        if ($names[0] == 'Sec Key') {
+            /* single-field secondary key*/
+            $this->indexFields[0] = $this->indexName;
+        } else {
+            /* multi-field secondary index*/
         }
 
-        return [$this->table, $this->fields];
+        $this->Close();
+
+        $this->results = [$this->table, $this->indexFields];
+        return [$this->results];
     }
 
-     public function Draw()
+    public function Draw()
     {
+
         echo("<br>{$this->file}");
         echo '<br>FieldCount: ' . $this->tableFieldCount;
         $this->table->Draw();
-        $t = new HtmlTable();
-        $t->Draw($this->fields);
+        echo "<br>";
+        echo "<br>Secondary Index and Primary Key Fields: " . implode(', ', $this->indexFields);
         echo "<br><br>";
     }
 
 }
-
-

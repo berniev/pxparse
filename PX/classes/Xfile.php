@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -18,22 +17,19 @@
 
 namespace PX\classes;
 
-class FieldSpecs
+class Xfile
 {
 
-    /** @var string */
-    public $name = '';
-
-    /** @var int */
-    public $type = 0;
-
-    /** @var int */
-    public $len = 0;
-
-    /** @var int */
-    public $isKey = 0;
-
-    /** @var int */
-    public $num = 0;
-
+    public $recordSize = 0;
+    public $headerBlockLength = 0;
+    public $fielType = 0; // 8= Sec Index file
+    public $dataBlockSize = 0; // in K
+    public $numRecords = 0;
+    public $blocksInUse = 0;
+    public $totalBlocks = 0;
+    public $firstDataBlock = 0; // always 1
+    public $lastBlock = 0;
+    public $numFields = 0;
+    public $numKeyFields = 0;
+    public $firstFreeBlock = 0;
 }

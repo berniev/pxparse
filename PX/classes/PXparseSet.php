@@ -78,7 +78,7 @@ class PXparseSet extends PXparse
 
         $nums = $this->ReadFieldNums();
         $specs = $this->ReadFieldSpecs();
-        $this->ReadTmpName();
+        $this->ReadTableName();
         $names = $this->ReadFieldNames();
 
         foreach ($this->results as $i => $res) {

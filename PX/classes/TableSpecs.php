@@ -26,6 +26,9 @@ class TableSpecs
     /** @var int */
     public $headerSize = 0;
 
+    /** @var int  */
+    public $fileType = 0;
+
     /** @var int */
     public $isKeyed = 0;
 
@@ -65,4 +68,11 @@ class TableSpecs
     /** @var string */
     public $tmpFile = '';
 
+    public function Draw(){
+        $t = new HtmlTable;
+        $t->hrow=array_keys((array)$this);
+        $t->rows[0] = array_values((array)$this);
+        $t->Draw();
+
+    }
 }

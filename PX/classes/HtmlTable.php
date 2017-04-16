@@ -30,7 +30,7 @@ class HtmlTable
     /**
      * @param array $arr
      */
-    public function Draw(array $arr)
+    public function Draw($arr = null)
     {
         if ($arr) {
             $this->rows = $arr;

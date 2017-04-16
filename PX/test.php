@@ -18,22 +18,47 @@
 /**
  * Sample test file
  */
+
 namespace PX;
 
 use PX\classes\PXparseDb;
 use PX\classes\PXparseSet;
 use PX\classes\PXparseVal;
+use PX\classes\PXparseX;
 
 include 'loader.php';
 
+$fileName = 'ordinvlx';
 $parser = new PXparseDb;
-$parser->ParseFile('filename.db');
-$parser->Draw();
-
+$res = $parser->ParseFile("testfiles/{$fileName}.DB");
+if ($res) {
+    $parser->Draw();
+}
+/*
 $parser = new PXparseSet;
-$parser->ParseFile('filename.set');
-$parser->Draw();
+$res = $parser->ParseFile("testfiles/{$fileName}.SET");
+if ($res) {
+    $parser->Draw();
+}
 
 $parser = new PXparseVal;
-$parser->ParseFile('filename.val');
-$parser->Draw();
+$res = $parser->ParseFile("testfiles/{$fileName}.VAL");
+if ($res) {
+    $parser->Draw();
+}
+*/
+$parser = new PXparseX;
+$res = $parser->ParseFile("testfiles/{$fileName}.xg0");
+if ($res) {
+    $parser->Draw();
+}
+$parser = new PXparseX;
+$res = $parser->ParseFile("testfiles/{$fileName}.xg2");
+if ($res) {
+    $parser->Draw();
+}
+$parser = new PXparseX;
+$res = $parser->ParseFile("testfiles/clients.xg0");
+if ($res) {
+    $parser->Draw();
+}

@@ -71,7 +71,7 @@ class PXparseVal extends PXparse
 
         $specs = $this->ReadFieldSpecs();
 
-        $tmpName = $this->ReadTmpName();
+        $tmpName = $this->ReadTableName();
 
         $fieldNames = $this->ReadFieldNames();
 
