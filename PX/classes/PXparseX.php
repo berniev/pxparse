@@ -51,10 +51,7 @@ class PXparseX extends PXparse
         if ($names[0] == 'Sec Key') {
             /* single-field secondary key*/
             $this->indexFields[0] = $this->indexName;
-        } else {
-            /* multi-field secondary index*/
         }
-
         $this->Close();
 
         $this->results = [$this->table, $this->indexFields];
