@@ -17,7 +17,7 @@
 
 namespace PX\classes;
 
-class PXparseX extends PXparse
+class PXparseX extends PXparseDataFile
 {
 
     /** @var TableSpecs */
@@ -42,7 +42,7 @@ class PXparseX extends PXparse
      */
     public function ParseFile($fName)
     {
-        if ( ! $this->Open($fName, false)) {
+        if ( ! $this->Open($fName)) {
             return false;
         }
         list($this->table, $specs, $names, $nums) = $this->ParseDataHeader();

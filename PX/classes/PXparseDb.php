@@ -20,7 +20,7 @@
 
 namespace PX\classes;
 
-class PXparseDb extends PXparse
+class PXparseDb extends PXparseDataFile
 {
 
     /** @var TableSpecs */
@@ -36,7 +36,7 @@ class PXparseDb extends PXparse
      */
     public function ParseFile($fName)
     {
-        if ( ! $this->Open($fName, false)) {
+        if ( ! $this->Open($fName)) {
             return false;
         }
 
