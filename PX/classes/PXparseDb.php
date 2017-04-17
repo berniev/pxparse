@@ -30,6 +30,8 @@ class PXparseDb extends PXparseDataFile
     public $fields = [];
 
     /**
+     * DB and Xxx files have the same header structure
+     *
      * @param string $fName
      *
      * @return array|bool
@@ -40,8 +42,7 @@ class PXparseDb extends PXparseDataFile
             return false;
         }
 
-        list($this->table, $specs, $names, $nums) = $this->ParseDataHeader();
-
+        list($this->table, $specs, $names, $nums) = $this->ParseDataFileHeader();
 
         $this->fields = [];
         for ($i = 0; $i < $this->table->numFields; $i++) {
@@ -52,7 +53,7 @@ class PXparseDb extends PXparseDataFile
             $field->num = $nums[$i];
             $this->fields[] = $field;
         }
-        $this->table->isKeyed = $this->table->fileType == '02' ? 0 : 1; // 0x04
+        $this->table->isKeyed = $this->table->fileType == '02' ? 0 : 1;
         if ($this->table->isKeyed) {
             for ($i = 0; $i < $this->table->numKeyFields; $i++) {
                 $this->fields[$i]->isKey = 1;

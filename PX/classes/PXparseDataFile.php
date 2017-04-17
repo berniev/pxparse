@@ -22,7 +22,7 @@ abstract class PXparseDataFile extends PXparse
     /**
      * @return array
      */
-    public function ParseDataHeader()
+    public function ParseDataFileHeader()
     {
         $table = new TableSpecs;
 

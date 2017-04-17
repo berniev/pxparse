@@ -45,7 +45,7 @@ class PXparseX extends PXparseDataFile
         if ( ! $this->Open($fName)) {
             return false;
         }
-        list($this->table, $specs, $names, $nums) = $this->ParseDataHeader();
+        list($this->table, $specs, $names, $nums) = $this->ParseDataFileHeader();
         $this->indexName = $this->ReadNullTermString();
 
         array_pop($names); // 'Hint'
