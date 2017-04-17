@@ -35,6 +35,11 @@ class PXparseX extends PXparse
     /** @var string */
     public $indexName = '';
 
+    /**
+     * @param string $fName
+     *
+     * @return array|bool
+     */
     public function ParseFile($fName)
     {
         if ( ! $this->Open($fName, false)) {

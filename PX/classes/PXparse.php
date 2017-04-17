@@ -316,6 +316,8 @@ abstract class PXparse
      */
     public function ParseDataHeader()
     {
+        /* fixed */
+
         $table = new TableSpecs;
         // 0x00 (0)
         $table->recordSize = $this->ReadPxLittleEndian2();
@@ -356,6 +358,8 @@ abstract class PXparse
 
         // 0x4f (79)
         $this->Raw(41);
+
+        /* variable */
 
         // 0x78 (120)
         $specs = $this->ReadFieldSpecs(); // numFields * 2

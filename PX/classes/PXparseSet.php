@@ -44,23 +44,34 @@ class PXparseSet extends PXparse
             return false;
         }
 
-        /* Header */
+        /* fixed */
+
+        // 0x00
         $this->hex(15);
 
-        $endOfData = $this->ReadPxLittleEndian2();
+        // 0x0f
+        $this->ReadPxLittleEndian2(); // end of data
 
+        // 0x11
         $this->Hex(44);
+        // 0x47
         $this->Hex(1);
 
+        // 0x48
         $this->tableFieldCount = $this->Dec(1);
-        $this->Hex(1);
+        // 0x49
+        $this->Hex(1); // 00
 
+        //0x50
         $this->Hex(10);
 
         /* start of settings data */
 
         $this->results = [];
 
+        /* variable */
+
+        // 0x5a
         for ($i = 0; $i < $this->tableFieldCount; $i++) {
             $res = new Settings;
             $res->posn = "0x" . dechex(ftell($this->handle));

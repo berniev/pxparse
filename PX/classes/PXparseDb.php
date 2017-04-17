@@ -29,6 +29,11 @@ class PXparseDb extends PXparse
     /** @var FieldSpecs[] */
     public $fields = [];
 
+    /**
+     * @param string $fName
+     *
+     * @return array|bool
+     */
     public function ParseFile($fName)
     {
         if ( ! $this->Open($fName, false)) {
