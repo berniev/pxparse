@@ -102,7 +102,7 @@ class ValueChecks
     /**
      * @var string
      */
-    public $fill = '';
+    public $fillType = '';
     /**
      * @var int
      */
@@ -127,6 +127,6 @@ class ValueChecks
         $this->autoPic = ($flags & 0x04) ? 1 : 0;
         $this->autoFill = ($flags & 0x08) ? 1 : 0;
         $this->autoLookup = ($flags & 0x10) ? 1 : 0;
-        $this->fill = $hasLookup ? self::lookupFills[$flags & 0x03] : '';
+        $this->fillType = $hasLookup ? self::lookupFills[$flags & 0x03] : '';
     }
 }

@@ -23,22 +23,18 @@ class PXparseX extends PXparseDataFile
     /** @var TableSpecs */
     public $table = [];
 
-    /** @var [] */
+    /** @var string */
     public $indexFields = [];
-
-    /** @var FieldSpecs[] */
-    public $primaryKeyFields = [];
-
-    /** @var array */
-    public $results = [];
 
     /** @var string */
     public $indexName = '';
 
+    /** @var SecIndex */
+    public $index = null;
     /**
      * @param string $fName
      *
-     * @return array|bool
+     * @return bool
      */
     public function ParseFile($fName)
     {
@@ -46,21 +42,26 @@ class PXparseX extends PXparseDataFile
             return false;
         }
         list($this->table, $specs, $names, $nums) = $this->ParseDataFileHeader();
-        $this->indexName = $this->ReadNullTermString();
+
+        $this->index = new SecIndex;
+
+        $this->index->name = $this->ReadNullTermString();
+
+        $this->Close();
 
         array_pop($names); // 'Hint'
-        $this->indexFields = [];
+
+        $indexFields = [];
         foreach ($names as $name) {
-            $this->indexFields[] = $name;
+            $indexFields[] = $name;
         }
         if ($names[0] == 'Sec Key') {
             /* single-field secondary key*/
-            $this->indexFields[0] = $this->indexName;
+            $indexFields[0] = $this->index->name;
         }
-        $this->Close();
+        $this->index->fields = implode(',', $indexFields);
 
-        $this->results = [$this->table, $this->indexFields];
-        return [$this->results];
+        return true;
     }
 
     public function Draw()
@@ -70,7 +71,7 @@ class PXparseX extends PXparseDataFile
         echo '<br>FieldCount: ' . $this->tableFieldCount;
         $this->table->Draw();
         echo "<br>";
-        echo "<br>Secondary Index and Primary Key Fields: " . implode(', ', $this->indexFields);
+        echo "<br>Secondary Index and Primary Key  Name: {$this->index->name}  Fields: {$this->index->fields}";
         echo "<br><br>";
     }
 

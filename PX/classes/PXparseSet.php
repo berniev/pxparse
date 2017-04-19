@@ -20,8 +20,8 @@ namespace PX\classes;
 class PXparseSet extends PXparse
 {
 
-    /** @var array */
-    public $results = [];
+    /** @var Settings[] */
+    public $settings = [];
 
     /*
       todo: where are format, colsize and ordby defined?:
@@ -40,7 +40,7 @@ class PXparseSet extends PXparse
      */
     public function ParseFile($fName)
     {
-        if ( ! $this->Open($fName, false)) {
+        if ( ! $this->Open($fName)) {
             return false;
         }
 
@@ -67,7 +67,7 @@ class PXparseSet extends PXparse
 
         /* start of settings data */
 
-        $this->results = [];
+        $this->settings = [];
 
         /* variable */
 
@@ -77,13 +77,13 @@ class PXparseSet extends PXparse
             $res->posn = "0x" . dechex(ftell($this->handle));
             $this->Hex(12);
             $res->dunno1 = $this->Hex(1);
-            $res->dispLen1 = $this->Dec(1);  // one of these is table, the other table display?
-            $res->dispLen2 = $this->Dec(1);  // one of these is table, the other table display?
+            $res->defDispLen = $this->Dec(1);  // one of these is table, the other table display?
+            $res->useDispLen = $this->Dec(1);  // one of these is table, the other table display?
             $res->dunno2 = $this->Hex(1);
             $res->decPlaces = $this->Dec(1);
             $this->Hex(1);
 
-            $this->results[] = $res;
+            $this->settings[] = $res;
         }
         $this->Hex(6);
 
@@ -92,14 +92,14 @@ class PXparseSet extends PXparse
         $this->ReadTableName();
         $names = $this->ReadFieldNames();
 
-        foreach ($this->results as $i => $res) {
+        foreach ($this->settings as $i => $res) {
             $res->num = $nums[$i];
             $res->type = $specs[$i]['type'];
             $res->len = $specs[$i]['len'];
             $res->name = $names[$i];
         }
         $this->Close();
-        return $this->results;
+        return $this->settings;
     }
 
     public function Draw()
@@ -107,7 +107,7 @@ class PXparseSet extends PXparse
         echo("<br>{$this->file}");
         echo '<br>FieldCount: ' . $this->tableFieldCount;
         $t = new HtmlTable;
-        $t->Draw($this->results);
+        $t->Draw($this->settings);
         echo "<br><br>";
     }
 }

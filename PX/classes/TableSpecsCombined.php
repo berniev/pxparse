@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -18,36 +17,29 @@
 
 namespace PX\classes;
 
-class Settings
+class TableSpecsCombined
 {
 
-    /** @var string */
-    public $posn = '';
-
-    /** @var int */
-    public $num = 0;
+    /* from DB */
 
     /** @var string */
     public $name = '';
 
+    /** @var int  */
+    public $numFields = 0;
+
+    /** @var int */
+    public $numKeyFields = 0;
+
     /** @var string */
-    public $type = '';
+    public $sortOrder = '';
 
-    /** @var string */
-    public $len = '';
+    /* from VAL */
+    // - none -
 
-    /** @var string */
-    public $dunno1 = '';
+    /* from SET */
+    // - none-
 
-    /** @var int */
-    public $defDispLen = 0;
+    /* from Xxx */
 
-    /** @var int */
-    public $useDispLen = 0;
-
-    /** @var int */
-    public $dunno2 = 0;
-
-    /** @var int */
-    public $decPlaces = 0;
 }

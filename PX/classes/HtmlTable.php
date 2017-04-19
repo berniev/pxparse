@@ -36,7 +36,8 @@ class HtmlTable
             $this->rows = $arr;
         }
         if ( ! $this->hrow) {
-            $this->hrow = array_keys((array)$arr[0]);
+            $rows = $arr;
+            $this->hrow = array_keys((array)array_shift($rows));
         }
         echo "<table>";
         foreach ($this->hrow as $h) {

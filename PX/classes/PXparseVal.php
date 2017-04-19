@@ -22,7 +22,7 @@ class PXparseVal extends PXparse
 {
 
     /** @var ValueChecks[] */
-    public $results = [];
+    public $vals = [];
 
     /**
      * @param string $fName
@@ -31,7 +31,7 @@ class PXparseVal extends PXparse
      */
     public function ParseFile($fName)
     {
-        if ( ! $this->Open($fName, false)) {
+        if ( ! $this->Open($fName)) {
             return false;
         }
 
@@ -67,11 +67,11 @@ class PXparseVal extends PXparse
         $this->Raw(1); // ?
         $this->Raw(1); // ? not always 00
 
-        $nums = $this->ReadFieldNums();
+        $this->ReadFieldNums();
 
         $specs = $this->ReadFieldSpecs();
 
-        $tmpName = $this->ReadTableName();
+        $this->ReadTableName();
 
         $fieldNames = $this->ReadFieldNames();
 
@@ -84,7 +84,7 @@ class PXparseVal extends PXparse
 
         $this->Raw(53);
 
-        $this->results = [];
+        $this->vals = [];
 
         while (ftell($this->handle) < $genInfoStartAddr) {
 
@@ -147,10 +147,10 @@ class PXparseVal extends PXparse
 
             $res->SetFlags($res->hasLookup, $flags);
 
-            $this->results[] = $res;
+            $this->vals[] = $res;
         }
         $this->Close();
-        return $this->results;
+        return $this->vals;
     }
 
     public function Draw()
@@ -158,7 +158,7 @@ class PXparseVal extends PXparse
         echo("<br>{$this->file}");
         echo '<br>FieldCount: ' . $this->tableFieldCount;
         $t = new HtmlTable;
-        $t->Draw($this->results);
+        $t->Draw($this->vals);
         echo "<br><br>";
     }
 }

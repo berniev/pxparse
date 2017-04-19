@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -18,36 +17,12 @@
 
 namespace PX\classes;
 
-class Settings
+class SecIndex
 {
-
-    /** @var string */
-    public $posn = '';
-
-    /** @var int */
-    public $num = 0;
 
     /** @var string */
     public $name = '';
 
-    /** @var string */
-    public $type = '';
-
-    /** @var string */
-    public $len = '';
-
-    /** @var string */
-    public $dunno1 = '';
-
-    /** @var int */
-    public $defDispLen = 0;
-
-    /** @var int */
-    public $useDispLen = 0;
-
-    /** @var int */
-    public $dunno2 = 0;
-
-    /** @var int */
-    public $decPlaces = 0;
+    /** @var string[] */
+    public $fields = [];
 }

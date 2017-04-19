@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -18,36 +17,73 @@
 
 namespace PX\classes;
 
-class Settings
+class FieldSpecsCombined
 {
 
-    /** @var string */
-    public $posn = '';
-
-    /** @var int */
-    public $num = 0;
+    /* from DB */
 
     /** @var string */
     public $name = '';
 
-    /** @var string */
-    public $type = '';
+    /** @var int */
+    public $type = 0;
+
+    /** @var int */
+    public $len = 0;
+
+    /** @var int */
+    public $isKey = 0;
+
+    /** @var int */
+    public $num = 0;
+
+    /* from VAL */
+
+    /** @var int */
+    public $required = 0;
 
     /** @var string */
-    public $len = '';
+    public $default = '';
+
+    /** @var string */
+    public $picture = '';
+
+    /** @var string */
+    public $lookupTable = '';
+
+    /** @var string */
+    public $loVal = '';
+
+    /** @var string */
+    public $hiVal = '';
+
+    /** @var string */
+    public $fillType = '';
+
+    /** @var int */
+    public $autoFill = 0;
+
+    /** @var int */
+    public $autoLookup = 0;
+
+    /** @var int */
+    public $autoPic = 0;
+
+    /* from SET */
 
     /** @var string */
     public $dunno1 = '';
 
     /** @var int */
-    public $defDispLen = 0;
+    public $defDispLen = 0;  // one of these is table, the other table display?
 
     /** @var int */
-    public $useDispLen = 0;
+    public $useDispLen = 0;  // one of these is table, the other table display?
 
     /** @var int */
     public $dunno2 = 0;
 
     /** @var int */
     public $decPlaces = 0;
+
 }

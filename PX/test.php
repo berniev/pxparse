@@ -21,6 +21,8 @@
 
 namespace PX;
 
+use PX\classes\Aggregate;
+use PX\classes\HtmlTable;
 use PX\classes\PXparseDb;
 use PX\classes\PXparseSet;
 use PX\classes\PXparseVal;
@@ -29,36 +31,18 @@ use PX\classes\PXparseX;
 include 'loader.php';
 
 $fileName = 'ordinvlx';
-$parser = new PXparseDb;
-$res = $parser->ParseFile("testfiles/{$fileName}.DB");
-if ($res) {
-    $parser->Draw();
-}
-/*
-$parser = new PXparseSet;
-$res = $parser->ParseFile("testfiles/{$fileName}.SET");
-if ($res) {
-    $parser->Draw();
-}
+$ag = new Aggregate($fileName, './testfiles/', false);
+$ag->Parse();
+foreach ($ag->tables as $table) {
+    echo"<br>Table: {$table->name}";
+    $h = new HtmlTable();
+    $h->Draw([$table]);
 
-$parser = new PXparseVal;
-$res = $parser->ParseFile("testfiles/{$fileName}.VAL");
-if ($res) {
-    $parser->Draw();
-}
-*/
-$parser = new PXparseX;
-$res = $parser->ParseFile("testfiles/{$fileName}.xg0");
-if ($res) {
-    $parser->Draw();
-}
-$parser = new PXparseX;
-$res = $parser->ParseFile("testfiles/{$fileName}.xg2");
-if ($res) {
-    $parser->Draw();
-}
-$parser = new PXparseX;
-$res = $parser->ParseFile("testfiles/clients.xg0");
-if ($res) {
-    $parser->Draw();
-}
+    echo"<br>Composite Secondary Indexes";
+    $h = new HtmlTable();
+    $h->Draw($ag->indexes[$table->name]);
+
+    echo "<br>Field info";
+    $h = new HtmlTable();
+    $h->Draw($ag->fields[$table->name]);
+ }

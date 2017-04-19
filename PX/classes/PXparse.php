@@ -57,11 +57,11 @@ abstract class PXparse
     protected function Open($file)
     {
         $this->file = $file;
-        if ( ! file_exists($file)) {
+        $this->handle = @fopen($file, 'r');
+        if($this->handle === false){
             echo("<br>" . __METHOD__ . " Can't open {$file}\n");
             return false;
         }
-        $this->handle = fopen($file, 'r');
         fseek($this->handle, 0);
         return true;
     }

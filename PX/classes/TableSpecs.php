@@ -20,6 +20,9 @@ namespace PX\classes;
 class TableSpecs
 {
 
+    /** @var string  */
+    public $name = '';
+
     /** @var int */
     public $recordSize = 0;
 

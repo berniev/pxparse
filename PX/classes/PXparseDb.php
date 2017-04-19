@@ -44,6 +44,8 @@ class PXparseDb extends PXparseDataFile
 
         list($this->table, $specs, $names, $nums) = $this->ParseDataFileHeader();
 
+        $this->table->name = $fName;
+
         $this->fields = [];
         for ($i = 0; $i < $this->table->numFields; $i++) {
             $field = new FieldSpecs;
