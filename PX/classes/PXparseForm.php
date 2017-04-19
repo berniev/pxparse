@@ -46,8 +46,6 @@ class PXparseForm extends PXparse
 
         $this->tableColumnNames = $this->GetFieldNames2(); // sets $this->fieldCount, $this->fieldNames
 
-        $tableColumnCount = count($this->tableColumnNames);
-
         $this->formHeader = $this->Header();
 
         $numPages = $this->formHeader->numPages;
@@ -78,8 +76,6 @@ class PXparseForm extends PXparse
         for ($i = 0; $i < $numPages; $i++) {
             $style = [];
             foreach ($this->pages[$i]->formFields as &$field) {
-                var_dump($field->fieldNum);
-                var_dump($field->fieldNum != 256 ? $this->tableColumnSpecs[$field->fieldNum - 1] : '');
                 if ($field->fieldNum != 256) {
                     $field->tableColType = $this->tableColumnSpecs[$field->fieldNum - 1]['type'];
                     $field->tableColSize = $this->tableColumnSpecs[$field->fieldNum - 1]['size'];
@@ -160,6 +156,11 @@ class PXparseForm extends PXparse
         $page->numOtherFields = $this->Dec(1);
     }
 
+    /**
+     * @param boolean $regularFieldsOnly
+     *
+     * @return PXformDefField
+     */
     private function Field($regularFieldsOnly)
     {
         $field = new PXformDefField();
@@ -196,7 +197,7 @@ class PXparseForm extends PXparse
             }
         }
         if ( ! $isCalculated) {
-            $chunk = $this->Hex(4);
+            $this->Raw(4);
         }
         return $field;
     }
@@ -206,7 +207,6 @@ class PXparseForm extends PXparse
      * @param $numOtherFields
      *
      * @return array
-     *
      */
     private function PageFields($numRegularFields, $numOtherFields)
     {
@@ -220,6 +220,9 @@ class PXparseForm extends PXparse
         return $formFields;
     }
 
+    /**
+     * @return array
+     */
     private function TableColumnSpecs()
     {
         $this->Raw(6);
@@ -239,6 +242,11 @@ class PXparseForm extends PXparse
         return $fieldSpecs;
     }
 
+    /**
+     * @param int $pageLines
+     *
+     * @return array
+     */
     private function CharMap($pageLines)
     {
         $colours = [
@@ -288,7 +296,7 @@ class PXparseForm extends PXparse
                             break 2;
                         }
                     case '4c' :
-                        // multiple of a character, all field boundaries and spaces
+                        /* multiple of a character, all field boundaries and spaces */
                         $count = $this->Dec(1);
                         $this->Hex(1);
                         $data = str_repeat(htmlspecialchars(CodePage850::CP850toUTF8($this->Raw(1))), $count);
@@ -301,8 +309,7 @@ class PXparseForm extends PXparse
                         exit('expected 4c');
                 }
             } else {
-                // single character
-                //$data = $input;
+                /* single character */
                 $data = htmlspecialchars(CodePage850::CP850toUTF8($input));
                 $style = $getStyle($this->Dec(1));
                 $x++;
@@ -327,7 +334,6 @@ class PXparseForm extends PXparse
     private function EmbeddedFormSpecs()
     {
         $spec = new PXembeddedFormSpec();
-        $embeddedForm = [];
         $NullTerm = function ($str) {
             return strstr($str, "\00", true);
         };
