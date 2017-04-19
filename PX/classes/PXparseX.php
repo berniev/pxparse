@@ -20,17 +20,9 @@ namespace PX\classes;
 class PXparseX extends PXparseDataFile
 {
 
-    /** @var TableSpecs */
-    public $table = [];
-
-    /** @var string */
-    public $indexFields = [];
-
-    /** @var string */
-    public $indexName = '';
-
     /** @var SecIndex */
     public $index = null;
+
     /**
      * @param string $fName
      *
@@ -41,11 +33,9 @@ class PXparseX extends PXparseDataFile
         if ( ! $this->Open($fName)) {
             return false;
         }
-        list($this->table, $specs, $names, $nums) = $this->ParseDataFileHeader();
+        list($specs, $names, $nums) = $this->ParseDataFileHeader();
 
-        $this->index = new SecIndex;
-
-        $this->index->name = $this->ReadNullTermString();
+        $this->index = new SecIndex($this->ReadNullTermString());
 
         $this->Close();
 

@@ -245,7 +245,7 @@ class Aggregate
                     case  'Date':
                         $sqlType = 'DATE';
                 }
-                $null = $field->required = '1' || $field->isKey ? 'NOT NULL' : 'NULL';
+                $null = ($field->required == '1' || $field->isKey) ? 'NOT NULL' : 'NULL';
                 $fldStrs[] = "\n`{$field->name}` {$sqlType} {$null}";
             }
             if ($pkeys) {

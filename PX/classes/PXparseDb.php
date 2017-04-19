@@ -23,9 +23,6 @@ namespace PX\classes;
 class PXparseDb extends PXparseDataFile
 {
 
-    /** @var TableSpecs */
-    public $table = [];
-
     /** @var FieldSpecs[] */
     public $fields = [];
 
@@ -42,14 +39,13 @@ class PXparseDb extends PXparseDataFile
             return false;
         }
 
-        list($this->table, $specs, $names, $nums) = $this->ParseDataFileHeader();
+        list($specs, $names, $nums) = $this->ParseDataFileHeader();
 
         $this->table->name = $fName;
 
         $this->fields = [];
         for ($i = 0; $i < $this->table->numFields; $i++) {
-            $field = new FieldSpecs;
-            $field->name = $names[$i];
+            $field = new FieldSpecs($names[$i]);
             $field->type = $specs[$i]['type'];
             $field->len = $specs[$i]['len'];
             $field->num = $nums[$i];
@@ -65,7 +61,7 @@ class PXparseDb extends PXparseDataFile
         return [$this->table, $this->fields];
     }
 
-     public function Draw()
+    public function Draw()
     {
         echo("<br>{$this->file}");
         echo '<br>FieldCount: ' . $this->tableFieldCount;
@@ -75,6 +71,46 @@ class PXparseDb extends PXparseDataFile
         echo "<br><br>";
     }
 
+    public function GetData()
+    {
+    }
+
+    private function GoToBlock($num)
+    {
+    }
+
+    private function ReadBlocks()
+    {
+        if ($this->table->numRecords == 0) {
+            return;
+        }
+        do {
+            $nextBlockNum = $this->ReadBlock();
+        } while ($nextBlockNum > 0);
+    }
+
+    private function ReadBlock()
+    {
+        $nextBlockNum = $this->ReadPxLittleEndian2();
+        $this->raw(2); // prev block num - ignore
+        $offsetToLastRecord = $this->ReadPxLittleEndian2();
+        $lastRecordStart = $this->Posn() + $offsetToLastRecord;
+        $records = [];
+        while ($this->Posn() <= $lastRecordStart) {
+            $records[] = $this->ReadRecord();
+        }
+        return $nextBlockNum;
+    }
+
+    private function ReadRecord()
+    {
+        $vals = [];
+        foreach ($this->fields as $field) {
+            $vals[] = $this->GetFieldData($field->type, $field->len);
+        }
+        return $vals;
+    }
 }
+
 
 

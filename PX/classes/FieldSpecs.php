@@ -36,4 +36,7 @@ class FieldSpecs
     /** @var int */
     public $num = 0;
 
+    public function __Construct($name){
+        $this->name = $name;
+    }
 }

@@ -23,99 +23,78 @@ class ValueChecks
 
     const lookupFills = ['curr-priv', 'all-priv', 'curr-help', 'all-help'];
 
-    /**
-     * @var string
-     */
-    public $posn = '';
-    /**
-     * @var int
-     */
-    public $num = 0;
-    /**
-     * @var string
-     */
+    /** @var string */
     public $name = '';
-    /**
-     * @var string
-     */
+
+    /** @var string */
+    public $posn = '';
+
+    /** @var int */
+    public $num = 0;
+
+     /** @var string */
     public $type = ''; //'Alpha'|'Number'|'Dollar'|'Short'|'Date'
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $len = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $hasLookup2 = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $hasPic = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $picLen = 0; // incl null terminator
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $pic = '';
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $reqd = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $hasLookup = 0;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $lookupTable = '';
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $hasLoVal = 0;
-    /**
-     * @var null
-     */
+
+    /** @var null */
     public $loVal = null;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $hasHiVal = 0;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $hiVal = '';
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $hasDef = 0;
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $def = '';
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $flags = ''; // '00'=Curr-Priv, '01'=All-Pvt, '02'=Curr-Help, '03'=All-Help '08'=auto-fill '04'=auto-picture '10'=auto-lookup
-    /**
-     * @var string
-     */
+
+    /** @var string */
     public $fillType = '';
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $autoPic = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $autoFill = 0;
-    /**
-     * @var int
-     */
+
+    /** @var int */
     public $autoLookup = 0;
 
+    public function __Construct($name){
+        $this->name = $name;
+    }
     /**
      * @param int    $hasLookup
      * @param string $flags (hex)

@@ -22,13 +22,13 @@ class Settings
 {
 
     /** @var string */
+    public $name = '';
+
+    /** @var string */
     public $posn = '';
 
     /** @var int */
     public $num = 0;
-
-    /** @var string */
-    public $name = '';
 
     /** @var string */
     public $type = '';

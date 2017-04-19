@@ -73,17 +73,18 @@ class PXparseSet extends PXparse
 
         // 0x5a
         for ($i = 0; $i < $this->tableFieldCount; $i++) {
-            $res = new Settings;
-            $res->posn = "0x" . dechex(ftell($this->handle));
+            $set = new Settings;
+            $this->settings[] = $set;
+
+            $set->posn = "0x" . dechex(ftell($this->handle));
             $this->Hex(12);
-            $res->dunno1 = $this->Hex(1);
-            $res->defDispLen = $this->Dec(1);  // one of these is table, the other table display?
-            $res->useDispLen = $this->Dec(1);  // one of these is table, the other table display?
-            $res->dunno2 = $this->Hex(1);
-            $res->decPlaces = $this->Dec(1);
+            $set->dunno1 = $this->Hex(1);
+            $set->defDispLen = $this->Dec(1);  // one of these is table, the other table display?
+            $set->useDispLen = $this->Dec(1);  // one of these is table, the other table display?
+            $set->dunno2 = $this->Hex(1);
+            $set->decPlaces = $this->Dec(1);
             $this->Hex(1);
 
-            $this->settings[] = $res;
         }
         $this->Hex(6);
 
@@ -92,11 +93,11 @@ class PXparseSet extends PXparse
         $this->ReadTableName();
         $names = $this->ReadFieldNames();
 
-        foreach ($this->settings as $i => $res) {
-            $res->num = $nums[$i];
-            $res->type = $specs[$i]['type'];
-            $res->len = $specs[$i]['len'];
-            $res->name = $names[$i];
+        foreach ($this->settings as $i => $set) {
+            $set->num = $nums[$i];
+            $set->type = $specs[$i]['type'];
+            $set->len = $specs[$i]['len'];
+            $set->name = $names[$i];
         }
         $this->Close();
         return $this->settings;

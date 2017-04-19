@@ -39,7 +39,6 @@ abstract class PXparse
     /** @var int */
     public $tableFieldCount = 0;
 
-
     /**
      * @param string $fname
      *
@@ -58,7 +57,7 @@ abstract class PXparse
     {
         $this->file = $file;
         $this->handle = @fopen($file, 'r');
-        if($this->handle === false){
+        if ($this->handle === false) {
             echo("<br>" . __METHOD__ . " Can't open {$file}\n");
             return false;
         }
@@ -169,7 +168,7 @@ abstract class PXparse
      *
      * @return string
      */
-    public function GetFieldData($fldType, $fldLen)
+    protected function GetFieldData($fldType, $fldLen)
     {
         $res = '';
         switch ($fldType) {
@@ -271,7 +270,7 @@ abstract class PXparse
     /**
      * @return string
      */
-    public function ReadPxBigEndian4()
+    protected function ReadPxBigEndian4()
     {
         /* 4-byte (32-bit) big-endian. Unsigned long integer */
         $in = $this->Raw(4);
@@ -284,7 +283,7 @@ abstract class PXparse
      *
      * @return string
      */
-    public function ReadNullTermString($minLen = 0)
+    protected function ReadNullTermString($minLen = 0)
     {
         $res = '';
         $chr = $this->Raw(1);
@@ -303,9 +302,14 @@ abstract class PXparse
         return $res;
     }
 
-    public function DumpPosn()
+    protected function Posn()
     {
-        $posnD = ftell($this->handle);
+        return ftell($this->handle);
+    }
+
+    protected function DumpPosn()
+    {
+        $posnD = $this->Posn();
         $posnH = dechex($posnD);
         var_dump("Posn:0x{$posnH}({$posnD})");
     }

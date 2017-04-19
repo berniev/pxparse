@@ -88,66 +88,69 @@ class PXparseVal extends PXparse
 
         while (ftell($this->handle) < $genInfoStartAddr) {
 
-            $res = new ValueChecks;
-
             /* fixed */
 
             // 0x00
-            $res->num = $this->Dec(1);
-            $res->name = $specs[$res->num]['name'];
-            $res->type = $specs[$res->num]['type'];
-            $res->len = $specs[$res->num]['len'];
-            $res->posn = "0x" . dechex(ftell($this->handle));
+            $num = $this->Dec(1);
+            $name = $specs[$num]['name'];
+            $type = $specs[$num]['type'];
+            $len = $specs[$num]['len'];
+
+            $vals = new ValueChecks($name);
+            $vals->num = $num;
+            $vals->type = $type;
+            $vals->len = $len;
+            $vals->posn = "0x" . dechex(ftell($this->handle));
 
             // 0x01
-            $res->picLen = $this->Dec(1);
+            $vals->picLen = $this->Dec(1);
             // 0x02
-            $res->reqd = (int)$this->Dec(1);
+            $vals->reqd = (int)$this->Dec(1);
             // 0x03
             $flags = $this->Hex(1);
 
             // 0x04
             $this->Raw(2);
             // 0x06
-            $res->hasLookup = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasLookup = $this->Hex(2) == 'e73a' ? 1 : 0;
 
             // 0x08
             $this->Raw(2);
             // 0x0a
-            $res->hasLookup2 = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasLookup2 = $this->Hex(2) == 'e73a' ? 1 : 0;
 
             // 0x0c
             $this->Raw(2);
             // 0x0e
-            $res->hasLoVal = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasLoVal = $this->Hex(2) == 'e73a' ? 1 : 0;
 
             // 0x10
             $this->Raw(2);
             // 0x12
-            $res->hasHiVal = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasHiVal = $this->Hex(2) == 'e73a' ? 1 : 0;
 
             // 0x14
             $this->Raw(2);
             // 0x16
-            $res->hasDef = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasDef = $this->Hex(2) == 'e73a' ? 1 : 0;
 
             // 0x18
             $this->Raw(2);
             // 0x1a
-            $res->hasPic = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasPic = $this->Hex(2) == 'e73a' ? 1 : 0;
 
             /* variable */
 
             // 0x1c
-            $res->lookupTable = $res->hasLookup ? $this->ReadNullTermString(80) : '';
-            $res->loVal = $res->hasLoVal ? $this->GetFieldData($res->type, $res->len) : '';
-            $res->hiVal = $res->hasHiVal ? $this->GetFieldData($res->type, $res->len) : '';
-            $res->def = $res->hasDef ? $this->GetFieldData($res->type, $res->len) : '';
-            $res->pic = $res->hasPic ? $this->ReadNullTermString() : '';
+            $vals->lookupTable = $vals->hasLookup ? $this->ReadNullTermString(80) : '';
+            $vals->loVal = $vals->hasLoVal ? $this->GetFieldData($type, $len) : '';
+            $vals->hiVal = $vals->hasHiVal ? $this->GetFieldData($type, $len) : '';
+            $vals->def = $vals->hasDef ? $this->GetFieldData($type, $len) : '';
+            $vals->pic = $vals->hasPic ? $this->ReadNullTermString() : '';
 
-            $res->SetFlags($res->hasLookup, $flags);
+            $vals->SetFlags($vals->hasLookup, $flags);
 
-            $this->vals[] = $res;
+            $this->vals[] = $vals;
         }
         $this->Close();
         return $this->vals;
