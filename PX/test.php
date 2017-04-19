@@ -23,14 +23,10 @@ namespace PX;
 
 use PX\classes\Aggregate;
 use PX\classes\HtmlTable;
-use PX\classes\PXparseDb;
-use PX\classes\PXparseSet;
-use PX\classes\PXparseVal;
-use PX\classes\PXparseX;
 
 include 'loader.php';
 
-$fileName = 'ordinvlx';
+$fileName = '*';
 $ag = new Aggregate($fileName, './testfiles/', false);
 $ag->Parse();
 foreach ($ag->tables as $table) {
@@ -38,11 +34,15 @@ foreach ($ag->tables as $table) {
     $h = new HtmlTable();
     $h->Draw([$table]);
 
-    echo"<br>Composite Secondary Indexes";
+    echo"<br>{$table->name} Secondary Indexes";
     $h = new HtmlTable();
     $h->Draw($ag->indexes[$table->name]);
 
-    echo "<br>Field info";
+    echo "<br>{$table->name} Field info";
     $h = new HtmlTable();
     $h->Draw($ag->fields[$table->name]);
+
+    echo "<br>SQL<br>";
+    $ag->GenerateSqlCreate();
+    echo $ag->sqls[$table->name];
  }

@@ -33,9 +33,6 @@ class Aggregate
     /** @var string */
     private $path = '';
 
-    /** @var bool */
-    private $inclSubDirectories = false;
-
     /** @var TableSpecsCombined[] */
     public $tables = null;
 
@@ -45,11 +42,13 @@ class Aggregate
     /** @var SecIndex[] */
     public $indexes = [];
 
-    public function __Construct($tableName = '*', $path = '', $inclSubDirectories = false)
+    /** @var string[] */
+    public $sqls = [];
+
+    public function __Construct($tableName = '*', $path = '')
     {
         $this->name = $tableName; // '*' = all
         $this->path = $path ? : './'; // '' = cwd
-        $this->inclSubDirectories = $inclSubDirectories;
     }
 
     /**
@@ -61,7 +60,7 @@ class Aggregate
         $this->tables = [];
         foreach ($tableNames as $table) {
             list($table, $fields, $indexes) = $this->DoAggregate($table);
-            $this->tables[] = $table;
+            $this->tables[$table->name] = $table;
             $this->fields[$table->name] = $fields;
             $this->indexes[$table->name] = $indexes;
         }
@@ -91,6 +90,7 @@ class Aggregate
         $table->numFields = $parser->table->numFields;
         $table->numKeyFields = $parser->table->numKeyFields;
         $table->sortOrder = $parser->table->sortOrder;
+        $pkeys = [];
         foreach ($parser->fields as $field) {
             $cField = new FieldSpecsCombined();
 
@@ -98,8 +98,13 @@ class Aggregate
             $cField->len = $field->len;
             $cField->type = $field->type;
             $cField->isKey = $field->isKey;
+            $cField->num = $field->num;
 
             $fields[$field->name] = $cField;
+
+            if($field->isKey){
+                $pkeys[] = $field->name;
+            }
         }
 
         /* from VAL */
@@ -108,6 +113,7 @@ class Aggregate
         if ($res) {
             foreach ($parser->vals as $val) {
                 $fields[$val->name]->lookupTable = $val->lookupTable;
+                $fields[$val->name]->picture = $val->pic;
                 $fields[$val->name]->default = $val->def;
                 $fields[$val->name]->required = $val->reqd;
                 $fields[$val->name]->autoFill = $val->autoFill;
@@ -139,6 +145,9 @@ class Aggregate
             $parser = new PXparseX;
             $res = $parser->ParseFile($this->path . $xFile);
             if ($res) {
+                $ifcount = count(explode(',',$parser->index->fields));
+                $sliced = array_slice(explode(',',$parser->index->fields),0, $ifcount -$table->numKeyFields);
+                $parser->index->fields = implode(',',$sliced);
                 $indexes[$parser->index->name] = $parser->index;
             }
         }
@@ -165,7 +174,7 @@ class Aggregate
             $cnt--;
             $ext = $filename[$cnt];
             if (strtolower($ext) == strtolower($extn)) {
-                $tableNames[] = $file;
+                $tableNames[] = $filename[0];
             }
         }
         return $tableNames;
@@ -201,5 +210,61 @@ class Aggregate
         closedir($dir_handle);
 
         return $xFiles;
+    }
+
+    public function GenerateSqlCreate()
+    {
+        foreach ($this->tables as $table) {
+            $fldStrs = [];
+            $pkeys = [];
+            $sql = "\nCREATE TABLE `{$table->name}`";
+            foreach ($this->fields[$table->name] as $field) {
+                IF ($field->isKey == '1') {
+                    $pkeys[] = $field->name;
+                }
+                $sqlType = '';
+                switch ($field->type) {
+                    case 'Alpha':
+                        $sqlType = "VARCHAR({$field->len})";
+                        break;
+                    case 'Number':
+                        $sqlType = 'DOUBLE';
+                        break;
+                    case  'Dollar':
+                        $sqlType = 'DECIMAL(19,4)';
+                        break;
+                    case  'Short':
+                        $sqlType = 'SMALLINT';
+                        break;
+                    case  'Memo':
+                        $sqlType = 'TEXT';
+                        break;
+                    case  'Blob':
+                        $sqlType = "BLOB({$field->len})";
+                        break;
+                    case  'Date':
+                        $sqlType = 'DATE';
+                }
+                $null = $field->required = '1' || $field->isKey ? 'NOT NULL' : 'NULL';
+                $fldStrs[] = "\n`{$field->name}` {$sqlType} {$null}";
+            }
+            if ($pkeys) {
+                foreach ($pkeys as &$pkey) {
+                    $pkey = "`{$pkey}`";
+                }
+                $fldStrs[] = "\nPRIMARY KEY (" . implode(', ', $pkeys) . ")";
+            }
+            foreach ($this->indexes[$table->name] as $index) {
+                $flds = explode(',', $index->fields);
+                foreach ($flds as &$fld) {
+                    $fld = "`{$fld}`";
+                }
+                $fldStr = implode(',', $flds);
+                $fldStrs[] = "\nINDEX `{$index->name}` ({$fldStr})";
+            }
+
+            $fldsStr = implode(',', $fldStrs);
+            $this->sqls[$table->name] = "\nCREATE TABLE `{$table->name}` ({$fldsStr})\n";
+        }
     }
 }

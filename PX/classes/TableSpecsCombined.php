@@ -34,12 +34,5 @@ class TableSpecsCombined
     /** @var string */
     public $sortOrder = '';
 
-    /* from VAL */
-    // - none -
-
-    /* from SET */
-    // - none-
-
-    /* from Xxx */
 
 }
