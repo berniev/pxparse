@@ -21,6 +21,25 @@ namespace PX\classes;
 class PXparseForm extends PXparse
 {
 
+    const COLOURS = [
+        0  => 'Black',
+        1  => 'Blue',
+        2  => 'Green',
+        3  => 'Cyan',
+        4  => 'Red',
+        5  => 'Magenta',
+        6  => 'Brown',
+        7  => 'LtGrey',
+        8  => 'Grey',
+        9  => 'LtBlue',
+        10 => 'LtGreen',
+        11 => 'LtCyan',
+        12 => 'LtRed',
+        13 => 'LtMagenta',
+        14 => 'Yellow',
+        15 => 'White'
+    ];
+
     /** @var array */
     public $tableColumnSpecs = [];
     /** @var PXformHeader */
@@ -249,27 +268,9 @@ class PXparseForm extends PXparse
      */
     private function CharMap($pageLines)
     {
-        $colours = [
-            0  => 'Black',
-            1  => 'Blue',
-            2  => 'Green',
-            3  => 'Cyan',
-            4  => 'Red',
-            5  => 'Magenta',
-            6  => 'Brown',
-            7  => 'LtGrey',
-            8  => 'Grey',
-            9  => 'LtBlue',
-            10 => 'LtGreen',
-            11 => 'LtCyan',
-            12 => 'LtRed',
-            13 => 'LtMagenta',
-            14 => 'Yellow',
-            15 => 'White'
-        ];
-        $getStyle = function ($dataDec) use ($colours) {
-            $colorFg = $colours[$dataDec & 0x0f];
-            $colorBg = $colours[($dataDec >> 4) & 0x0f];
+        $getStyle = function ($dataDec) {
+            $colorFg = self::COLOURS[$dataDec & 0x0f];
+            $colorBg = self::COLOURS[($dataDec >> 4) & 0x0f];
             //$mono = true && $dataDec & 0x10 ? 'Yes' : 'No';
             return [$colorFg, $colorBg];
         };
