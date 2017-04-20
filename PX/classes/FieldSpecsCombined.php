@@ -75,10 +75,10 @@ class FieldSpecsCombined
     public $dunno1 = '';
 
     /** @var int */
-    public $defDispLen = 0;  // one of these is table, the other table display?
+    public $defDispLen = 0;
 
     /** @var int */
-    public $useDispLen = 0;  // one of these is table, the other table display?
+    public $useDispLen = 0;
 
     /** @var int */
     public $dunno2 = 0;
