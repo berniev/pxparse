@@ -20,6 +20,18 @@ namespace PX\classes;
 abstract class PXparse
 {
 
+    /** @var  string */
+    protected $path;
+
+    /** @var string */
+    protected $file;
+
+    /** @var resource */
+    protected $handle = null;
+
+    /** @var string */
+    protected $tableName = '';
+
     const FIELD_TYPES = [
         '01' => 'Alpha',
         '02' => 'Date',
@@ -30,91 +42,75 @@ abstract class PXparse
         '0d' => 'Blob'
     ];
 
-    /** @var  string */
-    protected $file;
-
-    /** @var resource */
-    protected $handle = null;
-
-    /** @var int */
-    public $tableFieldCount = 0;
-
     /**
-     * @param string $fname
-     *
-     * @return mixed
-     */
-    abstract public function ParseFile($fname);
-
-    abstract public function Draw();
-
-    /**
-     * @param string $file
-     *
      * @return bool
      */
-    protected function Open($file)
+    public function Open()
     {
-        $this->file = $file;
-        $this->handle = @fopen($file, 'r');
+        $this->handle = @fopen($this->file, 'r');
         if ($this->handle === false) {
-            echo("<br>" . __METHOD__ . " Can't open {$file}\n");
             return false;
         }
-        fseek($this->handle, 0);
+        rewind($this->handle);
         return true;
     }
 
     /**
      * @return string
      */
-    protected function ReadTableName()
+    public function ReadTableName()
     {
         $tmp = rtrim($this->Raw(78));
-        $this->Raw(1);
+        $this->Skip(1);
         return $tmp;
     }
 
     /**
      *
+     * @param int $fieldCount
+     *
      * @return array
      */
-    protected function ReadFieldNames()
+    public function ReadFieldNames($fieldCount)
     {
         $names = [];
-        for ($i = 0; $i < $this->tableFieldCount; $i++) {
+        for ($i = 0; $i < $fieldCount; $i++) {
             $names[$i] = $this->ReadNullTermString();
         }
         return $names;
     }
 
     /**
+     * @param int $fieldCount
+     *
      * @return array
      */
-    protected function ReadFieldNums()
+    public function ReadFieldNums($fieldCount)
     {
         $nums = [];
-        for ($i = 0; $i < $this->tableFieldCount; $i++) {
+        for ($i = 0; $i < $fieldCount; $i++) {
             $nums[$i] = $this->Dec(1);
-            $this->Raw(1);
+            $this->Skip(1);
         }
         return $nums;
     }
 
     /**
+     * @param int $fieldCount
+     *
      * @return array
      */
-    protected function ReadFieldSpecs()
+    public function ReadFieldSpecs($fieldCount)
     {
         $specs = [];
-        for ($i = 0; $i < $this->tableFieldCount; $i++) {
+        for ($i = 0; $i < $fieldCount; $i++) {
             $specs[$i]['type'] = self::FIELD_TYPES[$this->Hex(1)];
             $specs[$i]['len'] = $this->Dec(1);
         }
         return $specs;
     }
 
-    protected function Close()
+    public function Close()
     {
         fclose($this->handle);
     }
@@ -124,7 +120,7 @@ abstract class PXparse
      *
      * @return bool|string
      */
-    protected function Raw($num)
+    public function Raw($num)
     {
         $read = fread($this->handle, $num);
         if (false === $read || '' == $read) {
@@ -142,7 +138,7 @@ abstract class PXparse
      *
      * @return string
      */
-    protected function Hex($num)
+    public function Hex($num)
     {
         $bin = $this->Raw($num);
         $hex = bin2hex($bin);
@@ -155,7 +151,7 @@ abstract class PXparse
      *
      * @return number
      */
-    protected function Dec($num)
+    public function Dec($num)
     {
         $hex = $this->Hex($num);
         $dec = hexdec($hex);
@@ -168,59 +164,49 @@ abstract class PXparse
      *
      * @return string
      */
-    protected function GetFieldData($fldType, $fldLen)
+    public function GetFieldData($fldType, $fldLen)
     {
         $res = '';
         switch ($fldType) {
             case 'Alpha':
-                $res = rtrim($this->ReadPxString($fldLen));
+                $res = rtrim($this->ReadString($fldLen));
+                $res = str_replace("'", "''", $res);
                 break;
 
             case 'Short':
-                $res = $this->ReadPxBigEndian2();
+                $res = $this->ReadPxBe2();
                 break;
 
             case 'Number':
             case 'Dollar':
-                $res = $this->GetPxDouble();
+                $res = $this->ReadPxDouble();
                 break;
 
             case 'Date':
-                $days = $this->ReadPxBigEndian4();
-                $d = new \DateTime("0001-01-00 +{$days} days");
-                $res = $d->format("Y-m-d");
+                $days = $this->ReadPxBe4();
+                if ($days == 0) {
+                    $res = null;
+                } else {
+                    $d = new \DateTime("0001-01-00 + {$days} days");
+                    $res = $d->format("Y-m-d");
+                }
                 break;
 
             case 'Memo':
-                $res = rtrim($this->Raw($fldLen + 10));
+                $res = rtrim($this->Raw($fldLen - 10));
+                $this->Raw(10);
                 break;
 
             case 'Blob':
-                $res = rtrim($this->Raw($fldLen + 10));
+                $res = rtrim($this->Raw($fldLen - 10));
+                $this->Raw(10);
                 break;
 
             case 'U':
-                $res = rtrim($this->Raw($fldLen + 10));
+                $res = rtrim($this->Raw($fldLen - 10));
+                $this->Raw(10);
         }
 
-        return $res;
-    }
-
-    /**
-     * @return number
-     */
-    protected function GetPxDouble()
-    {
-        /* input: modified big-endian 8-byte (64-bit) double precision floating point */
-        $in = $this->Raw(8);
-        if (bin2hex($in[0] & "\x80") != '00') {
-            $inn = $in & "\x7f\xff\xff\xff\xff\xff\xff\xff";
-        } elseif (bin2hex($in) != '0000000000000000') {
-            $inn = ~$in;
-        } else {
-            return 0;
-        }
-        $res = unpack('d', (strrev($inn)))[1];
         return $res;
     }
 
@@ -229,52 +215,10 @@ abstract class PXparse
      *
      * @return string
      */
-    protected function ReadPxString($len)
+    public function ReadString($len)
     {
         /* fixed length character string */
         $res = rtrim($this->Raw($len));
-        return $res;
-    }
-
-    /**
-     * @return int
-     */
-    protected function ReadPxLittleEndian2()
-    {
-        $in = $this->Raw(2);
-        $res = unpack('v', ($in))[1];
-        return $res;
-    }
-
-    /**
-     * @return int
-     */
-    protected function ReadPxLittleEndian4()
-    {
-        $in = $this->Raw(4);
-        $res = unpack('V', ($in))[1];
-        return $res;
-    }
-
-    /**
-     * @return int
-     */
-    protected function ReadPxBigEndian2()
-    {
-        // modified big-endian 2-byte (16-bit) signed integer.
-        $in = strrev($this->Raw(2)) ^ "\x00\x80";
-        $res = unpack('n', $in)[1];
-        return $res;
-    }
-
-    /**
-     * @return string
-     */
-    protected function ReadPxBigEndian4()
-    {
-        /* 4-byte (32-bit) big-endian. Unsigned long integer */
-        $in = $this->Raw(4);
-        $res = unpack('N', ($in))[1];
         return $res;
     }
 
@@ -283,7 +227,7 @@ abstract class PXparse
      *
      * @return string
      */
-    protected function ReadNullTermString($minLen = 0)
+    public function ReadNullTermString($minLen = 0)
     {
         $res = '';
         $chr = $this->Raw(1);
@@ -302,16 +246,103 @@ abstract class PXparse
         return $res;
     }
 
-    protected function Posn()
+    /**
+     * pdox number and dollar types
+     *
+     * @return number|string
+     */
+    public function ReadPxDouble()
+    {
+        /* input: modified big-endian 8-byte (64-bit) double precision floating point */
+        $in = $this->Raw(8);
+        if (bin2hex($in[0] & "\x80") != '00') {
+            // msb is set, strip it
+            $inn = $in & "\x7f\xff\xff\xff\xff\xff\xff\xff";
+        } elseif (bin2hex($in) != '0000000000000000') {
+            $inn = ~$in;
+        } else {
+            return null;
+        }
+        $res = unpack('d', (strrev($inn)))[1];
+        return $res;
+    }
+
+    /**
+     * @return int
+     */
+    public function ReadPxLe2()
+    {
+        $in = $this->Raw(2);
+        $res = unpack('v', ($in))[1];
+        return $res;
+    }
+
+    /**
+     * @return int
+     */
+    public function ReadPxLe4()
+    {
+        $in = $this->Raw(4);
+        $res = unpack('V', ($in))[1];
+        return $res;
+    }
+
+    /**
+     * @return int
+     */
+    public function ReadPxBe2()
+    {
+        // modified big-endian 2-byte (16-bit) signed integer.
+        $raw = $this->Raw(2);
+        if(bin2hex($raw) == '0000'){
+            return null;
+        }
+        $in = strrev($raw) ^ "\x00\x80";
+        $res = unpack('s', $in)[1];
+        return $res;
+    }
+
+    /**
+     * @return string
+     */
+    public function ReadPxBe4()
+    {
+        /* 4-byte (32-bit) big-endian. Unsigned long integer */
+        $raw = $this->Raw(4);
+        if(bin2hex($raw) == '00000000'){
+            return null;
+        }
+        $in = strrev($raw) ^ "\x00\x00\x00\x80";
+        $res = unpack('V', ($in))[1];
+        return $res;
+    }
+
+    public function GetPosn()
     {
         return ftell($this->handle);
     }
 
-    protected function DumpPosn()
+    public function DumpPosn()
     {
-        $posnD = $this->Posn();
+        $posnD = $this->GetPosn();
         $posnH = dechex($posnD);
         var_dump("Posn:0x{$posnH}({$posnD})");
+    }
+
+    /**
+     * @param int $posn
+     */
+    public function SetPosn($posn)
+    {
+        fseek($this->handle, $posn);
+    }
+
+    /**
+     * @param int $num
+     */
+    public function Skip($num)
+    {
+        fseek($this->handle, $num, SEEK_CUR);
     }
 
 }

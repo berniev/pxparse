@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Val;
 
 class ValueChecks
 {
@@ -92,9 +92,6 @@ class ValueChecks
     /** @var int */
     public $autoLookup = 0;
 
-    public function __Construct($name){
-        $this->name = $name;
-    }
     /**
      * @param int    $hasLookup
      * @param string $flags (hex)

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Form;
 
 class PXformField
 {

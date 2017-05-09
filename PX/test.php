@@ -21,28 +21,14 @@
 
 namespace PX;
 
-use PX\classes\Aggregate;
-use PX\classes\HtmlTable;
+use PX\classes\ParseTables;
 
 include 'loader.php';
 
-$fileName = '*';
-$ag = new Aggregate($fileName, './testfiles/', false);
-$ag->Parse();
-foreach ($ag->tables as $table) {
-    echo"<br>Table: {$table->name}";
-    $h = new HtmlTable();
-    $h->Draw([$table]);
-
-    echo"<br>{$table->name} Secondary Indexes";
-    $h = new HtmlTable();
-    $h->Draw($ag->indexes[$table->name]);
-
-    echo "<br>{$table->name} Field info";
-    $h = new HtmlTable();
-    $h->Draw($ag->fields[$table->name]);
-
-    echo "<br>SQL<br>";
-    $ag->GenerateSqlCreate();
-    echo $ag->sqls[$table->name];
- }
+$dB = 'testparse';
+$tableNames = [];
+$path = './testfiles/';
+//$path = '/Users/bernievanthof/archives/dos_19_apr_2016/DRIVE_C/PDOXDATA/';
+$parser = new ParseTables($tableNames, $path);
+$parser->setDestDb($dB);
+$parser->Parse();

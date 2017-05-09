@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -15,18 +16,38 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Set;
 
-class SecIndex
+class Settings
 {
 
     /** @var string */
     public $name = '';
 
-    /** @var string[] */
-    public $fields = [];
+    /** @var string */
+    public $posn = '';
 
-    public function __Construct($name){
-        $this->name = $name;
-    }
+    /** @var int */
+    public $num = 0;
+
+    /** @var string */
+    public $type = '';
+
+    /** @var string */
+    public $len = '';
+
+    /** @var string */
+    public $dunno1 = '';
+
+    /** @var int */
+    public $defDispLen = 0;
+
+    /** @var int */
+    public $useDispLen = 0;
+
+    /** @var int */
+    public $dunno2 = 0;
+
+    /** @var int */
+    public $decPlaces = 0;
 }

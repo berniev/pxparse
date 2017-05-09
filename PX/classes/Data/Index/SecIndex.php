@@ -15,21 +15,18 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Data\Index;
 
-class Xfile
+class SecIndex
 {
 
-    public $recordSize = 0;
-    public $headerBlockLength = 0;
-    public $fielType = 0; // 8= Sec Index file
-    public $dataBlockSize = 0; // in K
-    public $numRecords = 0;
-    public $blocksInUse = 0;
-    public $totalBlocks = 0;
-    public $firstDataBlock = 0; // always 1
-    public $lastBlock = 0;
-    public $numFields = 0;
-    public $numKeyFields = 0;
-    public $firstFreeBlock = 0;
+    /** @var string */
+    public $name = '';
+
+    /** @var string[] */
+    public $fields = [];
+
+    public function __Construct($name){
+        $this->name = $name;
+    }
 }

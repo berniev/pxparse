@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Set;
+
+use PX\classes\PXparse;
 
 class PXparseSet extends PXparse
 {
@@ -34,36 +36,46 @@ class PXparseSet extends PXparse
      */
 
     /**
-     * @param string $fName
+     * PXparseSet constructor.
      *
+     * @param string $path
+     * @param string $tableName
+     */
+    public function __Construct($path, $tableName)
+    {
+        $this->tableName = $tableName;
+        $this->file = "{$path}{$tableName}.set";
+    }
+
+    /**
      * @return array|false
      */
-    public function ParseFile($fName)
+    public function ParseFile()
     {
-        if ( ! $this->Open($fName)) {
+        if ( ! $this->Open()) {
             return false;
         }
 
         /* fixed */
 
         // 0x00
-        $this->hex(15);
+        $this->Skip(15);
 
         // 0x0f
-        $this->ReadPxLittleEndian2(); // end of data
+        $this->ReadPxLe2(); // end of data
 
         // 0x11
-        $this->Hex(44);
+        $this->Skip(44);
         // 0x47
-        $this->Hex(1);
+        $this->Skip(1);
 
         // 0x48
-        $this->tableFieldCount = $this->Dec(1);
+        $tableFieldCount = $this->Dec(1);
         // 0x49
-        $this->Hex(1); // 00
+        $this->Skip(1); // 00
 
         //0x50
-        $this->Hex(10);
+        $this->Skip(10);
 
         /* start of settings data */
 
@@ -72,26 +84,25 @@ class PXparseSet extends PXparse
         /* variable */
 
         // 0x5a
-        for ($i = 0; $i < $this->tableFieldCount; $i++) {
+        for ($i = 0; $i < $tableFieldCount; $i++) {
             $set = new Settings;
             $this->settings[] = $set;
 
-            $set->posn = "0x" . dechex(ftell($this->handle));
-            $this->Hex(12);
+            $set->posn = "0x" . dechex($this->GetPosn());
+            $this->Skip(12);
             $set->dunno1 = $this->Hex(1);
-            $set->defDispLen = $this->Dec(1);  // one of these is table, the other table display?
-            $set->useDispLen = $this->Dec(1);  // one of these is table, the other table display?
+            $set->defDispLen = $this->Dec(1);
+            $set->useDispLen = $this->Dec(1);
             $set->dunno2 = $this->Hex(1);
             $set->decPlaces = $this->Dec(1);
             $this->Hex(1);
-
         }
         $this->Hex(6);
 
-        $nums = $this->ReadFieldNums();
-        $specs = $this->ReadFieldSpecs();
+        $nums = $this->ReadFieldNums($tableFieldCount);
+        $specs = $this->ReadFieldSpecs($tableFieldCount);
         $this->ReadTableName();
-        $names = $this->ReadFieldNames();
+        $names = $this->ReadFieldNames($tableFieldCount);
 
         foreach ($this->settings as $i => $set) {
             $set->num = $nums[$i];
@@ -101,15 +112,6 @@ class PXparseSet extends PXparse
         }
         $this->Close();
         return $this->settings;
-    }
-
-    public function Draw()
-    {
-        echo("<br>{$this->file}");
-        echo '<br>FieldCount: ' . $this->tableFieldCount;
-        $t = new HtmlTable;
-        $t->Draw($this->settings);
-        echo "<br><br>";
     }
 }
 

@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Data;
+
+use PX\classes\Misc\HtmlTable;
 
 class TableSpecs
 {
@@ -34,6 +36,9 @@ class TableSpecs
 
     /** @var int */
     public $isKeyed = 0;
+
+    /** @var int  */
+    public $isEncrypted = 0;
 
     /** @var int */
     public $blockSize = 0;
@@ -70,6 +75,21 @@ class TableSpecs
 
     /** @var string */
     public $tmpFile = '';
+
+    /** @var int  */
+    public $encryption1 = 0;
+
+    /** @var int  */
+    public $encryption2 = 0;
+
+    /** @var int  */
+    public $writeProtected = 0;
+
+    /** @var string */
+    public $valSync = '00';
+
+    /** @var int  */
+    public $numAuxPasswords = 0;
 
     public function Draw(){
         $t = new HtmlTable;

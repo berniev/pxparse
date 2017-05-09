@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -15,39 +16,42 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Form;
 
-class PXformDefField
+class PXembeddedFormSpec
 {
 
     /** @var  string */
-    public $name;
-    /** @var  int */
-    public $x;
-    /** @var  int */
-    public $y;
-    /** @var  int */
-    public $end;
-    /** @var  int */
-    public $len;
-    /** @var  string */
-    public $type;
-    /** @var  int */
-    public $fieldNum;
-    /** @var  string */
-    public $detail;
-    /** @var  string */
-    public $tableColType;
-    /** @var  int */
-    public $tableColSize;
-    /** @var string */
-    public $bg = '';
-    /** @var string */
-    public $fg = '';
+    public $type = '';
 
-    public function SetStyle(array $style)
-    {
-        $this->fg = $style[0];
-        $this->bg = $style[1];
-    }
+    /** @var string */
+    public $tableName = '';
+
+    /** @var string */
+    public $database = '';
+
+    /** @var string */
+    public $form = '';
+
+    /** @var int */
+    public $formNum = 0;
+
+    /** @var string */
+    public $tableForm = '';
+
+    /** @var int */
+    public $pageNum = 0;
+
+    /** @var int */
+    public $y = 0;
+
+    /** @var int */
+    public $x = 0;
+
+    /** @var string */
+    public $isLinked = '';
+
+    /** @var int */
+    public $numLinkFields = 0;
+
 }

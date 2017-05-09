@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2017 Bernie van't Hof
  *
@@ -16,38 +15,21 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Data\Index;
 
-class Settings
+class Xfile
 {
 
-    /** @var string */
-    public $name = '';
-
-    /** @var string */
-    public $posn = '';
-
-    /** @var int */
-    public $num = 0;
-
-    /** @var string */
-    public $type = '';
-
-    /** @var string */
-    public $len = '';
-
-    /** @var string */
-    public $dunno1 = '';
-
-    /** @var int */
-    public $defDispLen = 0;
-
-    /** @var int */
-    public $useDispLen = 0;
-
-    /** @var int */
-    public $dunno2 = 0;
-
-    /** @var int */
-    public $decPlaces = 0;
+    public $recordSize = 0;
+    public $headerBlockLength = 0;
+    public $fieldType = 0; // 8= Sec Index file
+    public $dataBlockSize = 0; // in K
+    public $numRecords = 0;
+    public $blocksInUse = 0;
+    public $totalBlocks = 0;
+    public $firstDataBlock = 0; // always 1
+    public $lastBlock = 0;
+    public $numFields = 0;
+    public $numKeyFields = 0;
+    public $firstFreeBlock = 0;
 }

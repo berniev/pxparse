@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Form;
 
 abstract class Form
 {
@@ -30,7 +30,7 @@ abstract class Form
     /** @var array */
     public $tableColumnSpecs = [];
 
-    /** @var \PX\classes\PXformField[]   NB: [] = use ~all~ fields */
+    /** @var PXformField[]   NB: [] = use ~all~ fields */
     public $fields = [];
 
     /** @var PXformPage */

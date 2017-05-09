@@ -16,7 +16,9 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Form;
+
+use PX\classes\PXparse;
 
 class PXparseForm extends PXparse
 {

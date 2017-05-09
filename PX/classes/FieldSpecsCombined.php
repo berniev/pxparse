@@ -49,13 +49,13 @@ class FieldSpecsCombined
     public $picture = '';
 
     /** @var string */
-    public $lookupTable = '';
-
-    /** @var string */
     public $loVal = '';
 
     /** @var string */
     public $hiVal = '';
+
+    /** @var string */
+    public $lookupTable = '';
 
     /** @var string */
     public $fillType = '';
@@ -86,4 +86,62 @@ class FieldSpecsCombined
     /** @var int */
     public $decPlaces = 0;
 
+    static public function InfoSqlCreate($sqlTableName)
+    {
+        $sql = "\nCREATE TABLE `{$sqlTableName}` (";
+        $sql .= "\n`Table` VARCHAR(8) NOT NULL,";
+        $sql .= "\n`Field` VARCHAR(8) NOT NULL,";
+        $sql .= "\n`Type` VARCHAR(8) NULL,";
+        $sql .= "\n`Len` SMALLINT UNSIGNED NULL,";
+        $sql .= "\n`IsKey` TINYINT UNSIGNED NULL,";
+        $sql .= "\n`Num` SMALLINT UNSIGNED NULL,";
+        $sql .= "\n`Required` TINYINT UNSIGNED NULL,";
+        $sql .= "\n`Default` VARCHAR(256) NULL,";
+        $sql .= "\n`Picture` VARCHAR(256) NULL,";
+        $sql .= "\n`LoVal` VARCHAR(256) NULL,";
+        $sql .= "\n`HiVal` VARCHAR(256) NULL,";
+        $sql .= "\n`LookupTable` VARCHAR(80) NULL,";
+        $sql .= "\n`FillType` VARCHAR(10) NULL,";
+        $sql .= "\n`AutoFill` TINYINT UNSIGNED NULL,";
+        $sql .= "\n`AutoLookup` TINYINT UNSIGNED NULL,";
+        $sql .= "\n`AutoPic` TINYINT UNSIGNED NULL,";
+        $sql .= "\n`Dunno1` VARCHAR(8) NULL,";
+        $sql .= "\n`DefDispLen` SMALLINT UNSIGNED NULL,";
+        $sql .= "\n`UseDispLen` SMALLINT UNSIGNED NULL,";
+        $sql .= "\n`Dunno2` VARCHAR(8) NULL,";
+        $sql .= "\n`DecPlaces` SMALLINT UNSIGNED NULL,";
+        $sql .= "\nPRIMARY KEY (`Table`, `Field`)";
+        $sql .= "\n);\n";
+        return $sql;
+    }
+
+    static public function InfoSqlInsert($sqlTableName, $tableName, $fields)
+    {
+        $sqls = [];
+        foreach($fields as $field){
+            $sql = "('{$tableName}', ";
+            $sql .= "'{$field->name}', ";
+            $sql .= "'{$field->type}', ";
+            $sql .= "'{$field->len}', ";
+            $sql .= "'{$field->isKey}', ";
+            $sql .= "'{$field->num}', ";
+            $sql .= "'{$field->required}', ";
+            $sql .= "'{$field->default}', ";
+            $sql .= "'{$field->picture}', ";
+            $sql .= "'{$field->loVal}', ";
+            $sql .= "'{$field->hiVal}', ";
+            $sql .= "'{$field->lookupTable}', ";
+            $sql .= "'{$field->fillType}', ";
+            $sql .= "'{$field->autoFill}', ";
+            $sql .= "'{$field->autoLookup}', ";
+            $sql .= "'{$field->autoPic}', ";
+            $sql .= "'{$field->dunno1}', ";
+            $sql .= "'{$field->defDispLen}', ";
+            $sql .= "'{$field->useDispLen}', ";
+            $sql .= "'{$field->dunno2}', ";
+            $sql .= "'{$field->decPlaces}')";
+            $sqls[] = $sql;
+        }
+        return "\nINSERT INTO `{$sqlTableName}` VALUES\n" . implode(",\n", $sqls) . ";\n";
+    }
 }

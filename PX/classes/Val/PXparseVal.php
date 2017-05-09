@@ -16,7 +16,9 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Val;
+
+use PX\classes\PXparse;
 
 class PXparseVal extends PXparse
 {
@@ -25,13 +27,22 @@ class PXparseVal extends PXparse
     public $vals = [];
 
     /**
-     * @param string $fName
+     * PXparseVal constructor.
      *
+     * @param string $path
+     * @param string $tableName
+     */
+    public function __Construct($path, $tableName)
+    {
+        $this->tableName = $tableName;
+        $this->file = "{$path}{$tableName}.val";
+    }
+    /**
      * @return array|false
      */
-    public function ParseFile($fName)
+    public function ParseFile()
     {
-        if ( ! $this->Open($fName)) {
+        if ( ! $this->Open()) {
             return false;
         }
 
@@ -43,7 +54,7 @@ class PXparseVal extends PXparse
         /* Header */
 
         $this->Raw(1); // 0
-        $this->Raw(1); // 1 always (?) 09h separator
+        $this->Raw(1); // 1 field type 0x09
         $this->Raw(1); // 2
         $this->Raw(1); // 3
 
@@ -54,11 +65,11 @@ class PXparseVal extends PXparse
         $this->Raw(1); // 7 last field num (not necessarily number of fields)
         $this->Raw(1); // 8 00h
 
-        $genInfoStartAddr = $this->ReadPxLittleEndian2();
+        $genInfoStartAddr = $this->ReadPxLe2();
 
-        $this->Raw($genInfoStartAddr - 11); // just skip vals data for now
+        $this->SetPosn($genInfoStartAddr);
 
-        $this->tableFieldCount = $this->Dec(1); // number of fields
+        $tableFieldCount = $this->Dec(1); // number of fields
         $this->Raw(1); // 00h
 
         $this->Raw(1); // ?
@@ -67,40 +78,37 @@ class PXparseVal extends PXparse
         $this->Raw(1); // ?
         $this->Raw(1); // ? not always 00
 
-        $this->ReadFieldNums();
+        $this->ReadFieldNums($tableFieldCount);
 
-        $specs = $this->ReadFieldSpecs();
+        $specs = $this->ReadFieldSpecs($tableFieldCount);
 
         $this->ReadTableName();
 
-        $fieldNames = $this->ReadFieldNames();
+        $fieldNames = $this->ReadFieldNames($tableFieldCount);
 
-        for ($i = 0; $i < $this->tableFieldCount; $i++) {
+        for ($i = 0; $i < $tableFieldCount; $i++) {
             $specs[$i]['name'] = $fieldNames[$i];
         }
-        rewind($this->handle);
 
-        /* start of value checks data */
+        /* back to start of value checks data */
 
-        $this->Raw(53);
+        $this->SetPosn(53);
 
         $this->vals = [];
 
-        while (ftell($this->handle) < $genInfoStartAddr) {
+        /* one vals block per field that has val checks */
+        while ($this->GetPosn() < $genInfoStartAddr) {
+
+            $vals = new ValueChecks;
 
             /* fixed */
 
             // 0x00
-            $num = $this->Dec(1);
-            $name = $specs[$num]['name'];
-            $type = $specs[$num]['type'];
-            $len = $specs[$num]['len'];
-
-            $vals = new ValueChecks($name);
-            $vals->num = $num;
-            $vals->type = $type;
-            $vals->len = $len;
-            $vals->posn = "0x" . dechex(ftell($this->handle));
+            $vals->posn = "0x" . dechex($this->GetPosn());
+            $vals->num = $this->Dec(1);
+            $vals->name = $specs[$vals->num]['name'];
+            $vals->type = $specs[$vals->num]['type'];
+            $vals->len = $specs[$vals->num]['len'];
 
             // 0x01
             $vals->picLen = $this->Dec(1);
@@ -110,42 +118,30 @@ class PXparseVal extends PXparse
             $flags = $this->Hex(1);
 
             // 0x04
-            $this->Raw(2);
-            // 0x06
-            $vals->hasLookup = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasLookup = $this->Hex(4) != '00000000' ? 1 : 0;
 
             // 0x08
-            $this->Raw(2);
-            // 0x0a
-            $vals->hasLookup2 = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasLookup2 = $this->Hex(4) != '00000000' ? 1 : 0;
 
             // 0x0c
-            $this->Raw(2);
-            // 0x0e
-            $vals->hasLoVal = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasLoVal = $this->Hex(4) != '00000000' ? 1 : 0;
 
             // 0x10
-            $this->Raw(2);
-            // 0x12
-            $vals->hasHiVal = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasHiVal = $this->Hex(4) != '00000000' ? 1 : 0;
 
             // 0x14
-            $this->Raw(2);
-            // 0x16
-            $vals->hasDef = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasDef = $this->Hex(4) != '00000000' ? 1 : 0;
 
             // 0x18
-            $this->Raw(2);
-            // 0x1a
-            $vals->hasPic = $this->Hex(2) == 'e73a' ? 1 : 0;
+            $vals->hasPic = $this->Hex(4) != '00000000' ? 1 : 0;
 
             /* variable */
 
             // 0x1c
             $vals->lookupTable = $vals->hasLookup ? $this->ReadNullTermString(80) : '';
-            $vals->loVal = $vals->hasLoVal ? $this->GetFieldData($type, $len) : '';
-            $vals->hiVal = $vals->hasHiVal ? $this->GetFieldData($type, $len) : '';
-            $vals->def = $vals->hasDef ? $this->GetFieldData($type, $len) : '';
+            $vals->loVal = $vals->hasLoVal ? $this->GetFieldData($vals->type, $vals->len) : '';
+            $vals->hiVal = $vals->hasHiVal ? $this->GetFieldData($vals->type, $vals->len) : '';
+            $vals->def = $vals->hasDef ? $this->GetFieldData($vals->type, $vals->len) : '';
             $vals->pic = $vals->hasPic ? $this->ReadNullTermString() : '';
 
             $vals->SetFlags($vals->hasLookup, $flags);
@@ -154,14 +150,5 @@ class PXparseVal extends PXparse
         }
         $this->Close();
         return $this->vals;
-    }
-
-    public function Draw()
-    {
-        echo("<br>{$this->file}");
-        echo '<br>FieldCount: ' . $this->tableFieldCount;
-        $t = new HtmlTable;
-        $t->Draw($this->vals);
-        echo "<br><br>";
     }
 }

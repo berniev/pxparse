@@ -15,24 +15,39 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Form;
 
-class TableSpecsCombined
+class PXformDefField
 {
 
-    /* from DB */
-
+    /** @var  string */
+    public $name;
+    /** @var  int */
+    public $x;
+    /** @var  int */
+    public $y;
+    /** @var  int */
+    public $end;
+    /** @var  int */
+    public $len;
+    /** @var  string */
+    public $type;
+    /** @var  int */
+    public $fieldNum;
+    /** @var  string */
+    public $detail;
+    /** @var  string */
+    public $tableColType;
+    /** @var  int */
+    public $tableColSize;
     /** @var string */
-    public $name = '';
-
-    /** @var int  */
-    public $numFields = 0;
-
-    /** @var int */
-    public $numKeyFields = 0;
-
+    public $bg = '';
     /** @var string */
-    public $sortOrder = '';
+    public $fg = '';
 
-
+    public function SetStyle(array $style)
+    {
+        $this->fg = $style[0];
+        $this->bg = $style[1];
+    }
 }

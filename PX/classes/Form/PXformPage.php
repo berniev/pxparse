@@ -16,42 +16,53 @@
  * limitations under the License.
  */
 
-namespace PX\classes;
+namespace PX\classes\Form;
 
-class PXembeddedFormSpec
+class PXformPage
 {
 
-    /** @var  string */
-    public $type = '';
+    /** @var int */
+    public $num = 0; // 0 to n-1
 
-    /** @var string */
-    public $tableName = '';
+    /** @var Form[] */
+    public $detailForms = [];
 
-    /** @var string */
-    public $database = '';
+    /** @var array */
+    public $chrMap = [];
 
-    /** @var string */
-    public $form = '';
+    /** @var array */
+    public $cmapLines = [];
+
+    /** @var PXformDefField[] */
+    public $formFields = [];
+
+    /** @var array */
+    public $fldStyles;
 
     /** @var int */
-    public $formNum = 0;
+    public $primaryFieldsMaybe = 0;
+
+    /** @var int */
+    public $linesPerPage = 0;
 
     /** @var string */
-    public $tableForm = '';
+    public $dunno1 = '';
 
     /** @var int */
-    public $pageNum = 0;
+    public $dunno2 = 0;
 
     /** @var int */
-    public $y = 0;
+    public $numRegularFields = 0;
 
     /** @var int */
-    public $x = 0;
+    public $numOtherFields = 0;
 
-    /** @var string */
-    public $isLinked = '';
+    /** @var null */
+    public $header = null;
 
-    /** @var int */
-    public $numLinkFields = 0;
-
+    public function __Construct($num)
+    {
+        $this->num = $num;
+    }
 }
+
