@@ -28,7 +28,6 @@ include 'loader.php';
 $dB = 'testparse';
 $tableNames = [];
 $path = './testfiles/';
-//$path = '/Users/bernievanthof/archives/dos_19_apr_2016/DRIVE_C/PDOXDATA/';
 $parser = new ParseTables($tableNames, $path);
 $parser->setDestDb($dB);
 $parser->Parse();
