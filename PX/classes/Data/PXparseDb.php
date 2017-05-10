@@ -86,7 +86,10 @@ class PXparseDb extends PXparseDataFile
     public function ParseFile()
     {
         list($specs, $names, $nums) = $this->ParseDataFileHeader();
-
+        if ($this->table->fileVersionId != 4) {
+            echo "\nNot a V4.n table";
+            return false;
+        }
         $this->fields = [];
         for ($i = 0; $i < $this->table->numFields; $i++) {
             $field = new FieldSpecs($names[$i]);
@@ -194,7 +197,7 @@ class PXparseDb extends PXparseDataFile
         return $rowVals;
     }
 
- }
+}
 
 
 

@@ -17,8 +17,6 @@
 
 namespace PX\classes\Data;
 
-use PX\classes\Misc\HtmlTable;
-
 class TableSpecs
 {
 
@@ -32,7 +30,7 @@ class TableSpecs
     public $headerSize = 0;
 
     /** @var int  */
-    public $fileType = 0;
+    public $fileType = 0; // 0=DB-keyed, 1=PX, 2=DB-unkeyed, 3=Xnn-NonIncr, 4=Ynn, 5=Xnn-Incr, 6=XGn-NonIncr, 7=YGn, 8=XGn-Incr
 
     /** @var int */
     public $isKeyed = 0;
@@ -59,7 +57,7 @@ class TableSpecs
     public $lastBlock = 0;
 
     /** @var int */
-    public $fileVersionId = 0;
+    public $fileVersionId = 0; // 3=3.0, 4=3.5, 9=4.x, 11=5.x, 12=7.x
 
     /** @var int */
     public $numFields = 0;
@@ -91,11 +89,4 @@ class TableSpecs
     /** @var int  */
     public $numAuxPasswords = 0;
 
-    public function Draw(){
-        $t = new HtmlTable;
-        $t->hrow=array_keys((array)$this);
-        $t->rows[0] = array_values((array)$this);
-        $t->Draw();
-
-    }
 }

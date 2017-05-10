@@ -39,7 +39,7 @@ abstract class PXparseDataFile extends PXparse
         // 0x02 (2)
         $this->table->headerSize = $this->ReadPxLe2();
         // 0x04 (4)
-        $this->table->fileType = $this->Hex(1); // 0x00 = keyed, 0x02 = unkeyed
+        $this->table->fileType = $this->Dec(1);
         // 0x05 (5)
         $this->table->blockSize = $this->Dec(1);
         // 0x06 (6)
@@ -67,7 +67,7 @@ abstract class PXparseDataFile extends PXparse
         // 0x20 (32)
         $this->Skip(1); // numIndexLevels
         // 0x21 (33)
-        $this->table->numFields = $this->tableFieldCount = $this->Dec(1);
+        $this->table->numFields = $this->Dec(1);
         // 0x22 (34)
         $this->Skip(1); // 0x00
         // 0x23 (35)
@@ -93,7 +93,7 @@ abstract class PXparseDataFile extends PXparse
         // 0x38 (56)
         $this->table->writeProtected = $this->Hex(1) !== '00'?1:0; // writeProtected
         // 0x39 (57)
-        $this->Skip(1); // fileVersionID
+        $this->table->fileVersionId = $this->Dec(1);
         // 0x3a (58)
         $this->Skip(2); // maxBlocks
         // 0x3c (60)
