@@ -22,12 +22,12 @@ class Xfile
 
     public $recordSize = 0;
     public $headerBlockLength = 0;
-    public $fieldType = 0; // 8= Sec Index file
+    public $fieldType = 0; // 0x08 = Sec Index file
     public $dataBlockSize = 0; // in K
     public $numRecords = 0;
     public $blocksInUse = 0;
     public $totalBlocks = 0;
-    public $firstDataBlock = 0; // always 1
+    public $firstDataBlock = 0;
     public $lastBlock = 0;
     public $numFields = 0;
     public $numKeyFields = 0;
