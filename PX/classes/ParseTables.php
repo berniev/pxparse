@@ -174,8 +174,9 @@ class ParseTables
 
         $infoDest->Write(FieldSpecsCombined::InfoSqlCreate($this->sqlInfoTableName));
 
-        foreach ($tableNames as $table) {
-            $this->ParseTable($table, $infoDest, $createDest, $dataDest);
+        foreach ($tableNames as $tableName) {
+            echo "<br>$tableName";
+            $this->ParseTable($tableName, $infoDest, $createDest, $dataDest);
         }
 
         $dataDest->Close();

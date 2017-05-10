@@ -141,6 +141,7 @@ class PXparseDb extends PXparseDataFile
             $nextBlockNum = $this->ReadPxLe2();
             $this->Skip(2); // prev block num - ignore
             $offsetToLastRecord = $this->ReadPxLe2();
+
             /* records */
             $records = $this->ReadRecords($offsetToLastRecord);
             if (false === $records) {
@@ -175,8 +176,7 @@ class PXparseDb extends PXparseDataFile
         $records = [];
         $lastRecordStart = $this->GetPosn() + $offsetToLastRecord;
         while ($this->GetPosn() <= $lastRecordStart) {
-            $record = $this->ReadRecord();
-            $records[] = $record;
+            $records[] = $this->ReadRecord();
         }
         return $records;
     }

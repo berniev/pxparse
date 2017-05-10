@@ -90,7 +90,7 @@ class FieldSpecsCombined
     {
         $sql = "\nCREATE TABLE `{$sqlTableName}` (";
         $sql .= "\n`Table` VARCHAR(8) NOT NULL,";
-        $sql .= "\n`Field` VARCHAR(8) NOT NULL,";
+        $sql .= "\n`Field` VARCHAR(40) NOT NULL,";
         $sql .= "\n`Type` VARCHAR(8) NULL,";
         $sql .= "\n`Len` SMALLINT UNSIGNED NULL,";
         $sql .= "\n`IsKey` TINYINT UNSIGNED NULL,";
