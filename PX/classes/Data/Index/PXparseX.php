@@ -22,6 +22,12 @@ use PX\classes\Data\PXparseDataFile;
 class PXparseX extends PXparseDataFile
 {
 
+    /**
+     * PXparseX constructor.
+     *
+     * @param string $path
+     * @param string $tableName
+     */
     public function __Construct($path, $tableName)
     {
         $this->tableName = $tableName;
