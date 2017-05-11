@@ -23,7 +23,7 @@ use PX\classes\Set\PXparseSet;
 use PX\classes\Val\PXparseVal;
 
 /**
- * Combine the structures from DB, Xxx, VAL, and SET files
+ * Combine the structures from DB, Xnn, VAL, and SET files
  */
 class ParseTables
 {
@@ -45,6 +45,7 @@ class ParseTables
 
     /** @var string */
     private $sqlCreateFile = '';
+
     /** @var string */
     private $sqlDataFile = '';
 

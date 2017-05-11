@@ -84,7 +84,7 @@ class PXparseX extends PXparseDataFile
         }
         if ($names[0] == 'Sec Key') {
             /* single-field secondary key */
-            // pdox doesn't preserve case of field name but mysql col names are case insensitive
+            // pdox doesn't preserve case of field name but mysql col names are case insensitive so should have no impact
             $index->fields[0] = $index->name;
         }
         return $index;

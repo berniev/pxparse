@@ -59,6 +59,9 @@ class TableSpecs
     /** @var int */
     public $fileVersionId = 0; // 3=3.0, 4=3.5, 9=4.x, 11=5.x, 12=7.x
 
+    /** @var string  */
+    public $codePage = ''; // 0x015b=US, 0x04e4=Spain
+
     /** @var int */
     public $numFields = 0;
 
@@ -69,7 +72,7 @@ class TableSpecs
     public $firstFreeBlockNum = 0;
 
     /** @var string */
-    public $sortOrder = '';
+    public $sortOrder = ''; // 0x00=ASCII, 0xb7=Intl, 0x82=?, 0xe6=Nor/Dan, 0x0b=Swe/Fin, 0x5d=Span, 0x62=PDX_ANSII_Intl
 
     /** @var string */
     public $tmpFile = '';

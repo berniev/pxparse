@@ -34,15 +34,7 @@ class PXparseDb extends PXparseDataFile
     /** @var string */
     public $tableName = '';
 
-    /** @var string */
-    protected $dB = '';
-
-    /** @var bool */
-    protected $singleOuputFile = true;
-
     /**
-     * PXparseDb constructor.
-     *
      * @param string $path
      * @param string $tableName
      */

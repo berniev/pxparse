@@ -59,9 +59,9 @@ abstract class PXparseDataFile extends PXparse
         // 0x15 (21)
         $this->Skip(1); // indexFieldNumber
         // 0x16 (22)
-        $this->Skip(4); // ptr primaryIndexWorkspace
+        $this->Skip(4); // primaryIndexWorkspacePtr
         // 0x1a (26)
-        $this->Skip(4); // unknownPtr1A
+        $this->Skip(4); // unknownPtr
         // 0x1e (30)
         $this->Skip(2); // indexRoot
         // 0x20 (32)
@@ -75,39 +75,39 @@ abstract class PXparseDataFile extends PXparse
         // 0x25 (37)
         $this->table->encryption1 = $this->ReadPxLe4();
         // 0x29 (41)
-        $this->Skip(1); // sortOrder
+        $this->table->sortOrder = $this->Hex(1);
         // 0x2a (42)
         $this->Skip(1); // modifiedFlags2
         // 0x2b (43)
-        $this->Skip(2); // unknown2Bx2C
+        $this->Skip(2); // unknown
         // 0x2d (45)
         $this->Skip(1); // changeCount1
         // 0x2e (46)
-        $this->table->valSync = $this->Hex(1); // valSync
+        $this->table->valSync = $this->Hex(1);
         // 0x2f (47)
-        $this->Skip(1); // unknown2F
+        $this->Skip(1); // unknown
         // 0x30 (48)
         $this->Skip(4); // tableNamePtrPtr
         // 0x34 (52)
         $this->Skip(4); // fldInfoPtr
         // 0x38 (56)
-        $this->table->writeProtected = $this->Hex(1) !== '00'?1:0; // writeProtected
+        $this->table->writeProtected = $this->Hex(1) !== '00' ? 1 : 0;
         // 0x39 (57)
         $this->table->fileVersionId = $this->Dec(1);
         // 0x3a (58)
         $this->Skip(2); // maxBlocks
         // 0x3c (60)
-        $this->Skip(1); // unknown3C
+        $this->Skip(1); // unknown
         // 0x3d (61)
-        $this->table->numAuxPasswords = $this->Dec(1); // auxPasswords
+        $this->table->numAuxPasswords = $this->Dec(1);
         // 0x3e (62)
-        $this->Skip(2); // unknown3Ex3F
+        $this->Skip(2); // unknown
         // 0x40 (64)
         $this->table->isEncrypted = $this->Hex(4) != '00000000' ? 1 : 0; // cryptInfoStartPtr
         // 0x44 (68)
         $this->Skip(4); // cryptInfoEndPtr
         // 0x48 (72)
-        $this->Skip(1); // unknown48
+        $this->Skip(1); // unknown
         // 0x49 (73)
         $this->Skip(4); // autoInc
         // 0x4d (77)
@@ -119,11 +119,11 @@ abstract class PXparseDataFile extends PXparse
         // 0x51 (81)
         $this->Skip(2); // realHeaderSize
         // 0x53 (83)
-        $this->Skip(2); // unknown53x54
+        $this->Skip(2); // unknown
         // 0x55 (85)
         $this->Skip(1); // refIntegrity
         // 0x56 (86)
-        $this->Skip(2); // unknown56x57
+        $this->Skip(2); // unknown
         // 0x58 (88)
         $this->Skip(2); // fileVerID3
         // 0x5a (90)
@@ -139,13 +139,13 @@ abstract class PXparseDataFile extends PXparse
         // 0x68 (104)
         $this->Skip(2); // sometimesNumFields
         // 0x6a (106)
-        $this->Skip(2); // dosCodePage
+        $this->table->codePage = $this->Hex(2);
         // 0x6c (108)
         $this->Skip(4); // unknown6Cx6F
         // 0x70 (112)
         $this->Skip(2); // changeCount4
         // 0x72 (114)
-        $this->Skip(6); // unknown72x77
+        $this->Skip(6); // unknown
 
         /* variable */
 
