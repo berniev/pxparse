@@ -805,20 +805,6 @@ class Decrypt
         0x3F
     ];
 
-    static public function DecryptChunkPas($buff, $a, $b, $c, $d)
-    {
-        $res = str_repeat(',', 256);
-        for ($i = 0; $i < 256; $i++) {
-            $x = self::KEYB[($i + $d) & 0xff];
-            $y = $buff[$x] ^ self::KEYA[($x + $a) & 0xff];
-            $y = $y ^ self::KEYB[($i + $b) & 0xff];
-            $y = $y ^ self::KEYC[($i + $c) & 0xff];
-            $res[$i] = dechex($y);
-        }
-        $res = pack('H256',$res);
-        return $res;
-    }
-
     /**
      * @param string $chunk
      * @param int    $a
