@@ -49,7 +49,7 @@ abstract class PXparseDataFile extends PXparse
         // 0x0c (12)
         $this->table->fileBlocks = $this->ReadPxLe2();
         // 0x0e (14)
-        $this->table->firstBlock = $this->ReadPxLe2(); // always 1
+        $this->table->firstBlock = $this->ReadPxLe2();
         // 0x10 (16)
         $this->table->lastBlock = $this->ReadPxLe2();
         // 0x12 (18)
