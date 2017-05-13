@@ -112,7 +112,6 @@ class PXparseDb extends PXparseDataFile
         }
 
         /* table is not empty, not encrypted */
-
         $dest->Write("\n\nALTER TABLE `{$this->tableName}` DISABLE KEYS;");
         $dest->Write("\nINSERT INTO `{$this->tableName}`");
         $colNames = [];
