@@ -23,8 +23,6 @@ class PXparseX extends PXparseDataFile
 {
 
     /**
-     * PXparseX constructor.
-     *
      * @param string $path
      * @param string $tableName
      */
