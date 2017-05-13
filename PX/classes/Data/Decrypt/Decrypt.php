@@ -848,7 +848,7 @@ class Decrypt
         $numChunks = $blockSize / $chunkSize;
         for ($i = 0; $i < $numChunks; ++$i) {
             $chunk = substr($block, $i * $chunkSize, $chunkSize);
-            $ch = self::DecryptChunkPas($chunk, $hash0, $hash1, $i, $blockNum);
+            $ch = self::DecryptChunk($chunk, $hash0, $hash1, $i, $blockNum);
             $res .= $ch;
         }
         return $res;
