@@ -28,12 +28,6 @@ class PXparseDb extends PXparseDataFile
     /** @var FieldSpecs[] */
     public $fields = [];
 
-    /** @var TableSpecs */
-    public $table = null;
-
-    /** @var string */
-    public $tableName = '';
-
     /**
      * @param string $path
      * @param string $tableName
