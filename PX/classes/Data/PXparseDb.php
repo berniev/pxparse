@@ -71,17 +71,17 @@ class PXparseDb extends PXparseDataFile
      */
     public function ParseFile()
     {
-        list($specs, $names, $nums) = $this->ParseDataFileHeader();
+        $this->ParseDataFileHeader();
         if ($this->table->fileVersionId != 9) {
             echo "\nNot a V4.n table";
             return false;
         }
         $this->fields = [];
         for ($i = 0; $i < $this->table->numFields; $i++) {
-            $field = new FieldSpecs($names[$i]);
-            $field->type = $specs[$i]['type'];
-            $field->len = $specs[$i]['len'];
-            $field->num = $nums[$i];
+            $field = new FieldSpecs($this->names[$i]);
+            $field->type = $this->specs[$i]['type'];
+            $field->len = $this->specs[$i]['len'];
+            $field->num = $this->nums[$i];
             $this->fields[] = $field;
         }
         $this->table->isKeyed = $this->table->fileType == '02' ? 0 : 1;
@@ -114,12 +114,14 @@ class PXparseDb extends PXparseDataFile
         /* table is not empty, not encrypted */
         $dest->Write("\n\nALTER TABLE `{$this->tableName}` DISABLE KEYS;");
         $dest->Write("\nINSERT INTO `{$this->tableName}`");
+
         $colNames = [];
         foreach ($this->fields as $field) {
             $colNames[] = "`{$field->name}`";
         }
         $colNamesStr = "\n(" . implode(', ', $colNames) . ")";
         $dest->Write("{$colNamesStr}\nVALUES");
+
         $blockSize = $this->table->blockSize * 1024;
         $nextBlockNum = $this->table->firstBlock;
         do {
@@ -177,7 +179,7 @@ class PXparseDb extends PXparseDataFile
         $rowVals = [];
         foreach ($this->fields as $field) {
             $rowVal = $this->GetFieldData($field->type, $field->len);
-            $rowVals[] = $rowVal ? "'" . $rowVal . "'" : 'NULL';
+            $rowVals[] = $rowVal === null ? 'NULL' : "'" . $rowVal . "'";
         }
         return $rowVals;
     }

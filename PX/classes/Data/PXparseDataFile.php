@@ -25,9 +25,15 @@ abstract class PXparseDataFile extends PXparse
     /** @var TableSpecs */
     public $table = null;
 
-    /**
-     * @return array
-     */
+    /** @var array */
+    protected $names = [];
+
+    /** @var array */
+    protected $specs = [];
+
+    /** @var array */
+    protected $nums = [];
+
     protected function ParseDataFileHeader()
     {
         $this->table = new TableSpecs;
@@ -150,18 +156,17 @@ abstract class PXparseDataFile extends PXparse
         /* variable */
 
         // 0x78 (120)
-        $specs = $this->ReadFieldSpecs($this->table->numFields); // numFields * 2
+        $this->specs = $this->ReadFieldSpecs($this->table->numFields); // numFields * 2
 
         $this->Skip(4); // 4
 
         $this->Skip(4 * $this->table->numFields); // numFields * 4
 
         $this->table->tmpFile = $this->ReadTableName(); // 79
-        $names = $this->ReadFieldNames($this->table->numFields); // variable
-        $nums = $this->ReadFieldNums($this->table->numFields); // numFields * 2
+        $this->names = $this->ReadFieldNames($this->table->numFields); // variable
+        $this->nums = $this->ReadFieldNums($this->table->numFields); // numFields * 2
 
         $this->table->sortOrder = $this->ReadNullTermString(); // variable
-        return [$specs, $names, $nums];
     }
 
 }

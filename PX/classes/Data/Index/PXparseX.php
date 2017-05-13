@@ -75,18 +75,19 @@ class PXparseX extends PXparseDataFile
         if ( ! $this->Open()) {
             return false;
         }
-        list($specs, $names, $nums) = $this->ParseDataFileHeader();
+
+        $this->ParseDataFileHeader();
 
         $name = $this->ReadNullTermString();
         $index = new SecIndex($name);
         $this->Close();
-        array_pop($names); // 'Hint'
+        array_pop($this->names); // 'Hint'
 
         $index->fields = [];
-        foreach ($names as $name) {
+        foreach ($this->names as $name) {
             $index->fields[] = $name;
         }
-        if ($names[0] == 'Sec Key') {
+        if ($this->names[0] == 'Sec Key') {
             /* single-field secondary key */
             // pdox doesn't preserve case of field name but mysql col names are case insensitive so should have no impact
             $index->fields[0] = $index->name;
