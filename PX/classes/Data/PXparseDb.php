@@ -72,7 +72,7 @@ class PXparseDb extends PXparseDataFile
     public function ParseFile()
     {
         list($specs, $names, $nums) = $this->ParseDataFileHeader();
-        if ($this->table->fileVersionId != 4) {
+        if ($this->table->fileVersionId != 9) {
             echo "\nNot a V4.n table";
             return false;
         }
