@@ -1,7 +1,7 @@
 # pxparse
-php classes to interpret Paradox 4.5 (DOS) DB, VAL, SET, F &amp; Xxx files
+php classes to interpret Paradox 4.5 (DOS) DB, VAL, SET, F and XGn files
 
-Parses DB, VAL, SET and Xxx files to produce:
+Parses DB, VAL, SET and XGn files to produce:
 * pxinfo.sql (field data for each table)
 * pxcreate.sql (create statements including primary and secondary keys)
 * pxdata.sql (insert statements for extracted data)

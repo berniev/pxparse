@@ -158,6 +158,13 @@ abstract class PXparse
         return $dec;
     }
 
+    private function Clean($str)
+    {
+        $str = str_replace("'", "''", $str);
+        $str = str_replace("\\", "\\\\", $str);
+        return $str;
+    }
+
     /**
      * @param string $fldType
      * @param int    $fldLen
@@ -170,7 +177,7 @@ abstract class PXparse
         switch ($fldType) {
             case 'Alpha':
                 $res = rtrim($this->ReadString($fldLen));
-                $res = str_replace("'", "''", $res);
+                $res = $this->Clean($res);
                 break;
 
             case 'Short':
@@ -194,6 +201,7 @@ abstract class PXparse
 
             case 'Memo':
                 $res = rtrim($this->Raw($fldLen - 10));
+                $res = $this->Clean($res);
                 $this->Raw(10);
                 break;
 
@@ -294,7 +302,7 @@ abstract class PXparse
     {
         // modified big-endian 2-byte (16-bit) signed integer.
         $raw = $this->Raw(2);
-        if(bin2hex($raw) == '0000'){
+        if (bin2hex($raw) == '0000') {
             return null;
         }
         $in = strrev($raw) ^ "\x00\x80";
@@ -309,7 +317,7 @@ abstract class PXparse
     {
         /* 4-byte (32-bit) big-endian. Unsigned long integer */
         $raw = $this->Raw(4);
-        if(bin2hex($raw) == '00000000'){
+        if (bin2hex($raw) == '00000000') {
             return null;
         }
         $in = strrev($raw) ^ "\x00\x00\x00\x80";

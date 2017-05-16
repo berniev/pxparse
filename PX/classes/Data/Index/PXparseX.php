@@ -54,13 +54,12 @@ class PXparseX extends PXparseDataFile
                 $cnt = count($filename);
                 $cnt--;
                 $ext = $filename[$cnt];
-                if (substr((strtolower($ext)), 0, 1) == 'x') {
+                if (substr((strtolower($ext)), 0, 2) == 'xg') {
                     $xFiles[] = $file;
                 }
             }
         }
         closedir($dir_handle);
-
         return $xFiles;
     }
 

@@ -21,12 +21,16 @@
 namespace PX\classes\Data;
 
 use PX\classes\DestSql;
+use PX\classes\FieldSpecsCombined;
 
 class PXparseDb extends PXparseDataFile
 {
 
     /** @var FieldSpecs[] */
     public $fields = [];
+
+    /** @var [] */
+    private $keySubFields = [];
 
     /**
      * @param string $path
@@ -94,11 +98,12 @@ class PXparseDb extends PXparseDataFile
     }
 
     /**
-     * @param DestSql $dest
+     * @param DestSql              $dest
+     * @param FieldSpecsCombined[] $fields
      *
      * @return bool
      */
-    public function ParseData(DestSql $dest)
+    public function ParseData(DestSql $dest, array $fields)
     {
         set_time_limit(300);
 
@@ -107,7 +112,7 @@ class PXparseDb extends PXparseDataFile
         }
 
         if ($this->table->isEncrypted) {
-            echo "\nTable {$this->tableName} is encrypted, not extracting data";
+            echo "\nTable is encrypted, not extracting data";
             return false;
         }
 
@@ -133,7 +138,7 @@ class PXparseDb extends PXparseDataFile
             $offsetToLastRecord = $this->ReadPxLe2();
 
             /* records */
-            $records = $this->ReadRecords($offsetToLastRecord);
+            $records = $this->ReadRecords($offsetToLastRecord, $fields);
             if (false === $records) {
                 echo "\nreadfail";
                 return false; // read fail
@@ -153,33 +158,54 @@ class PXparseDb extends PXparseDataFile
             }
         } while ($nextBlockNum > 0);
         $dest->Write(";\nALTER TABLE `{$this->tableName}` ENABLE KEYS;");
+        if ($this->keySubFields) {
+            echo "\nWarning: Substituted value for null primary key or required field(s): " . implode(', ', array_keys($this->keySubFields));
+        }
         return true;
     }
 
     /**
-     * @param int $offsetToLastRecord
+     * @param int                  $offsetToLastRecord
+     * @param FieldSpecsCombined[] $fields
      *
      * @return array
      */
-    private function ReadRecords($offsetToLastRecord)
+    private function ReadRecords($offsetToLastRecord, array $fields)
     {
         $records = [];
         $lastRecordStart = $this->GetPosn() + $offsetToLastRecord;
         while ($this->GetPosn() <= $lastRecordStart) {
-            $records[] = $this->ReadRecord();
+            $records[] = $this->ReadRecord($fields);
         }
         return $records;
     }
 
     /**
+     * @param FieldSpecsCombined[] $fields
+     *
      * @return array
      */
-    private function ReadRecord()
+    private function ReadRecord(array $fields)
     {
         $rowVals = [];
         foreach ($this->fields as $field) {
             $rowVal = $this->GetFieldData($field->type, $field->len);
-            $rowVals[] = $rowVal === null ? 'NULL' : "'" . $rowVal . "'";
+            if ($rowVal === null && ($field->isKey || $fields[$field->name]->required == '1')) {
+                $this->keySubFields["`{$field->name}`"] = true;
+                switch ($field->type) {
+                    case 'Date':
+                        $rowVal = '0000-00-00';
+                        break;
+                    case 'Number':
+                    case 'Short':
+                    case 'Dollar':
+                        $rowVal = '0';
+                        break;
+                    default:
+                        $rowVal = '';
+                }
+            }
+            $rowVals[] = ($rowVal === null) ? 'NULL' : "'" . $rowVal . "'";
         }
         return $rowVals;
     }

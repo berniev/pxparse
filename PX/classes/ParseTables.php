@@ -52,7 +52,7 @@ class ParseTables
     /** @var string */
     private $destDb = '';
 
-    /** @var string  */
+    /** @var string */
     private $sqlInfoTableName = '';
 
     public function __Construct(
@@ -88,14 +88,6 @@ class ParseTables
     public function setPath($path)
     {
         $this->path = $path;
-    }
-
-    /**
-     * @param FieldSpecsCombined[] $fields
-     */
-    public function setFields($fields)
-    {
-        $this->fields = $fields;
     }
 
     /**
@@ -146,7 +138,6 @@ class ParseTables
         $this->sqlInfoTableName = $sqlInfoTableName;
     }
 
-
     /**
      * @return bool
      */
@@ -166,7 +157,7 @@ class ParseTables
         $dataDest = new DestSql($this->sqlDataFile);
         $dataDest->Open();
 
-        if($this->destDb){
+        if ($this->destDb) {
             $db = "\nCREATE DATABASE IF NOT EXISTS `{$this->destDb}`;\n\nUSE `{$this->destDb}`;\n";
             $infoDest->Write($db);
             $createDest->Write($db);
@@ -206,16 +197,16 @@ class ParseTables
             return false;
         }
 
-        $fields = [];
+        $this->fields = [];
 
         foreach ($dparser->fields as $field) {
-            $fields[$field->name] = new FieldSpecsCombined();
+            $this->fields[$field->name] = new FieldSpecsCombined();
 
-            $fields[$field->name]->name = $field->name;
-            $fields[$field->name]->len = $field->len;
-            $fields[$field->name]->type = $field->type;
-            $fields[$field->name]->isKey = $field->isKey;
-            $fields[$field->name]->num = $field->num;
+            $this->fields[$field->name]->name = $field->name;
+            $this->fields[$field->name]->len = $field->len;
+            $this->fields[$field->name]->type = $field->type;
+            $this->fields[$field->name]->isKey = $field->isKey;
+            $this->fields[$field->name]->num = $field->num;
         }
 
         /* from VAL */
@@ -223,16 +214,16 @@ class ParseTables
         $res = $vparser->ParseFile();
         if ($res) {
             foreach ($vparser->vals as $val) {
-                $fields[$val->name]->lookupTable = $val->lookupTable;
-                $fields[$val->name]->picture = $val->pic;
-                $fields[$val->name]->default = $val->def;
-                $fields[$val->name]->required = $val->reqd;
-                $fields[$val->name]->autoFill = $val->autoFill;
-                $fields[$val->name]->autoPic = $val->autoPic;
-                $fields[$val->name]->autoLookup = $val->autoLookup;
-                $fields[$val->name]->loVal = $val->loVal;
-                $fields[$val->name]->hiVal = $val->hiVal;
-                $fields[$val->name]->fillType = $val->fillType;
+                $this->fields[$val->name]->lookupTable = $val->lookupTable;
+                $this->fields[$val->name]->picture = $val->pic;
+                $this->fields[$val->name]->default = $val->def;
+                $this->fields[$val->name]->required = $val->reqd;
+                $this->fields[$val->name]->autoFill = $val->autoFill;
+                $this->fields[$val->name]->autoPic = $val->autoPic;
+                $this->fields[$val->name]->autoLookup = $val->autoLookup;
+                $this->fields[$val->name]->loVal = $val->loVal;
+                $this->fields[$val->name]->hiVal = $val->hiVal;
+                $this->fields[$val->name]->fillType = $val->fillType;
             }
         }
 
@@ -241,16 +232,16 @@ class ParseTables
         $res = $sparser->ParseFile();
         if ($res) {
             foreach ($sparser->settings as $set) {
-                $fields[$set->name]->decPlaces = $set->decPlaces;
-                $fields[$set->name]->dunno1 = $set->dunno1;
-                $fields[$set->name]->dunno2 = $set->dunno2;
-                $fields[$set->name]->defDispLen = $set->defDispLen;
-                $fields[$set->name]->useDispLen = $set->useDispLen;
+                $this->fields[$set->name]->decPlaces = $set->decPlaces;
+                $this->fields[$set->name]->dunno1 = $set->dunno1;
+                $this->fields[$set->name]->dunno2 = $set->dunno2;
+                $this->fields[$set->name]->defDispLen = $set->defDispLen;
+                $this->fields[$set->name]->useDispLen = $set->useDispLen;
             }
         }
 
         /* write sql info */
-        $infoDest->Write(FieldSpecsCombined::InfoSqlInsert($this->sqlInfoTableName, $tableName, $fields));
+        $infoDest->Write(FieldSpecsCombined::InfoSqlInsert($this->sqlInfoTableName, $tableName, $this->fields));
 
         /* from Xx */
         $indexes = [];
@@ -263,21 +254,21 @@ class ParseTables
             }
         }
         /* write sql create */
-        $createDest->Write($this->GenerateSqlCreate($tableName, $fields, $indexes));
+        $createDest->Write($this->GenerateSqlCreate($tableName, $this->fields, $indexes));
 
         /* write sql insert */
-        $dparser->ParseData($dataDest);
+        $dparser->ParseData($dataDest, $this->fields);
         return true;
     }
 
     /**
      * @param string               $tableName
-     * @param FieldSpecsCombined[] $fields
      * @param array[]              $indexes
+     * @param FieldSpecsCombined[] $fields
      *
      * @return string
      */
-    public function GenerateSqlCreate($tableName, array $fields, array $indexes)
+    private function GenerateSqlCreate($tableName, array $fields, array $indexes)
     {
         $fldStrs = [];
         $pkeys = [];
