@@ -37,6 +37,7 @@ class PXparseVal extends PXparse
         $this->tableName = $tableName;
         $this->file = "{$path}{$tableName}.val";
     }
+
     /**
      * @return array|false
      */
@@ -46,25 +47,28 @@ class PXparseVal extends PXparse
             return false;
         }
 
-        /**
-         * If first three bytes is 0xef-0xdf-oxbd (unicode substution string) then
-         * file has been saved as unicode and is unusable
-         */
-
         /* Header */
 
-        $this->Raw(1); // 0
-        $this->Raw(1); // 1 field type 0x09
-        $this->Raw(1); // 2
-        $this->Raw(1); // 3
+        // 0x00
+        $this->Raw(1);
+        // 0x01
+        $this->Raw(1); // file type 0x09=VAL?
+        // 0x02
+        $this->Raw(1);
+        // 0x03
+        $this->Raw(1);
+        // 0x04
+        $this->Raw(1);
+        // 0x05
+        $this->Raw(1);
+        // 0x06
+        $this->Raw(1);
+        // 0x06
+        $this->Raw(1);
+        // 0x07
+        $this->Raw(1); // last field num (not necessarily number of fields)
 
-        $this->Raw(1); // 4
-        $this->Raw(1); // 5
-        $this->Raw(1); // 6
-
-        $this->Raw(1); // 7 last field num (not necessarily number of fields)
-        $this->Raw(1); // 8 00h
-
+        // 0x08
         $genInfoStartAddr = $this->ReadPxLe2();
 
         $this->SetPosn($genInfoStartAddr);
@@ -78,7 +82,7 @@ class PXparseVal extends PXparse
         $this->Raw(1); // ?
         $this->Raw(1); // ? not always 00
 
-        $this->ReadFieldNums($tableFieldCount);
+        $nums = $this->ReadFieldNums($tableFieldCount);
 
         $specs = $this->ReadFieldSpecs($tableFieldCount);
 
@@ -89,22 +93,21 @@ class PXparseVal extends PXparse
         for ($i = 0; $i < $tableFieldCount; $i++) {
             $specs[$i]['name'] = $fieldNames[$i];
         }
-
         /* back to start of value checks data */
 
-        $this->SetPosn(53);
+        $this->SetPosn(0x35);
 
         $this->vals = [];
 
         /* one vals block per field that has val checks */
-        while ($this->GetPosn() < $genInfoStartAddr) {
-
+        while ($this->GetPosn() < $genInfoStartAddr - 8) {
+            /* one old file had extra bytes, dirty fix - 8 */
             $vals = new ValueChecks;
+            $vals->posn = "0x" . dechex($this->GetPosn());
 
             /* fixed */
 
             // 0x00
-            $vals->posn = "0x" . dechex($this->GetPosn());
             $vals->num = $this->Dec(1);
             $vals->name = $specs[$vals->num]['name'];
             $vals->type = $specs[$vals->num]['type'];
@@ -144,7 +147,7 @@ class PXparseVal extends PXparse
             $vals->def = $vals->hasDef ? $this->GetFieldData($vals->type, $vals->len) : '';
             $vals->pic = $vals->hasPic ? $this->ReadNullTermString() : '';
 
-            $vals->SetFlags($vals->hasLookup, $flags);
+            $vals->SetFlags($flags);
 
             $this->vals[] = $vals;
         }

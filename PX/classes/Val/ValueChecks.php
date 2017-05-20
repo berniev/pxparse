@@ -24,31 +24,22 @@ class ValueChecks
     const lookupFills = ['curr-priv', 'all-priv', 'curr-help', 'all-help'];
 
     /** @var string */
-    public $name = '';
-
-    /** @var string */
     public $posn = '';
 
     /** @var int */
     public $num = 0;
 
-     /** @var string */
+    /** @var string */
+    public $name = '';
+
+    /** @var string */
     public $type = ''; //'Alpha'|'Number'|'Dollar'|'Short'|'Date'
 
     /** @var int */
     public $len = 0;
 
     /** @var int */
-    public $hasLookup2 = 0;
-
-    /** @var int */
-    public $hasPic = 0;
-
-    /** @var int */
     public $picLen = 0; // incl null terminator
-
-    /** @var string */
-    public $pic = '';
 
     /** @var int */
     public $reqd = 0;
@@ -56,26 +47,35 @@ class ValueChecks
     /** @var int */
     public $hasLookup = 0;
 
-    /** @var string */
-    public $lookupTable = '';
+    /** @var int */
+    public $hasLookup2 = 0;
 
     /** @var int */
     public $hasLoVal = 0;
 
-    /** @var null */
-    public $loVal = null;
-
     /** @var int */
     public $hasHiVal = 0;
-
-    /** @var string */
-    public $hiVal = '';
 
     /** @var int */
     public $hasDef = 0;
 
+    /** @var int */
+    public $hasPic = 0;
+
+    /** @var string */
+    public $lookupTable = '';
+
+    /** @var null */
+    public $loVal = null;
+
+    /** @var string */
+    public $hiVal = '';
+
     /** @var string */
     public $def = '';
+
+    /** @var string */
+    public $pic = '';
 
     /** @var string */
     public $flags = ''; // '00'=Curr-Priv, '01'=All-Pvt, '02'=Curr-Help, '03'=All-Help '08'=auto-fill '04'=auto-picture '10'=auto-lookup
@@ -93,16 +93,15 @@ class ValueChecks
     public $autoLookup = 0;
 
     /**
-     * @param int    $hasLookup
      * @param string $flags (hex)
      */
-    public function SetFlags($hasLookup, $flags)
+    public function SetFlags($flags)
     {
         $this->flags = $flags;
         $flags = hexdec($flags);
         $this->autoPic = ($flags & 0x04) ? 1 : 0;
         $this->autoFill = ($flags & 0x08) ? 1 : 0;
         $this->autoLookup = ($flags & 0x10) ? 1 : 0;
-        $this->fillType = $hasLookup ? self::lookupFills[$flags & 0x03] : '';
+        $this->fillType = $this->hasLookup ? self::lookupFills[$flags & 0x03] : '';
     }
 }

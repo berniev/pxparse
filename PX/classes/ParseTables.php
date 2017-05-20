@@ -248,9 +248,9 @@ class ParseTables
         $xFiles = PXparseX::GetXfiles($this->path, $tableName);
         foreach ($xFiles as $xFile) {
             $xparser = new PXparseX($this->path, $tableName);
-            $res = $xparser->ParseFile($this->path . $xFile);
+            $res = $xparser->ParseFile($this->path . $xFile, $dparser);
             if ($res) {
-                $indexes[$res->name] = array_slice($res->fields, 0, count($res->fields) - $dparser->table->numKeyFields);
+                $indexes[$res->name] = $res;
             }
         }
         /* write sql create */
@@ -309,10 +309,10 @@ class ParseTables
             $fldStrs[] = "\nPRIMARY KEY (" . implode(', ', $pkeys) . ")";
         }
         foreach ($indexes as $name => $index) {
-            foreach ($index as &$fld) {
-                $fld = "`{$fld}`";
+            foreach ($index->fields as &$fieldName) {
+                $fieldName = "`{$fieldName}`";
             }
-            $fldStr = implode(',', $index);
+            $fldStr = implode(',', $index->fields);
             $fldStrs[] = "\nINDEX `{$name}` ({$fldStr})";
         }
 

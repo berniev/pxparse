@@ -48,6 +48,11 @@ class PXparseDb extends PXparseDataFile
     static public function GetTableNames($path)
     {
         $tableNames = [];
+        $isDir = is_dir($path);
+        if ( ! $isDir) {
+            echo "Not a directory: {$path}";
+            return false;
+        }
         $dir_handle = @opendir($path);
         if ( ! $dir_handle) {
             echo "opendir failure on {$path}";
@@ -157,7 +162,8 @@ class PXparseDb extends PXparseDataFile
         } while ($nextBlockNum > 0);
         $dest->Write(";\nALTER TABLE `{$this->tableName}` ENABLE KEYS;");
         if ($this->keySubFields) {
-            echo "\nWarning: Substituted value for null primary key or required field(s): " . implode(', ', array_keys($this->keySubFields));
+            echo "\nWarning: Substituted value for null primary key or required field(s): " .
+                 implode(', ', array_keys($this->keySubFields));
         }
         return true;
     }

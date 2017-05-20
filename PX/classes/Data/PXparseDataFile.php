@@ -26,13 +26,13 @@ abstract class PXparseDataFile extends PXparse
     public $table = null;
 
     /** @var array */
-    protected $names = [];
+    public $names = [];
 
     /** @var array */
     protected $specs = [];
 
     /** @var array */
-    protected $nums = [];
+    public $nums = [];
 
     protected function ParseDataFileHeader()
     {
@@ -169,4 +169,19 @@ abstract class PXparseDataFile extends PXparse
         $this->table->sortOrder = $this->ReadNullTermString(); // variable
     }
 
+    /**
+     * @param int $numToFind
+     *
+     * @return bool|string
+     */
+    public function GetFieldNameByPxNum($numToFind)
+    {
+        foreach ($this->nums as $key => $num) {
+            if ($num == $numToFind) {
+                return $this->names[$key];
+            }
+        }
+        echo "\nCould not match field num: {$numToFind} ";
+        return false;
+    }
 }

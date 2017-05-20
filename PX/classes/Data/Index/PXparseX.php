@@ -18,6 +18,7 @@
 namespace PX\classes\Data\Index;
 
 use PX\classes\Data\PXparseDataFile;
+use PX\classes\Data\PXparseDb;
 
 class PXparseX extends PXparseDataFile
 {
@@ -54,7 +55,7 @@ class PXparseX extends PXparseDataFile
                 $cnt = count($filename);
                 $cnt--;
                 $ext = $filename[$cnt];
-                if (substr((strtolower($ext)), 0, 2) == 'xg') {
+                if (substr((strtolower($ext)), 0, 1) == 'x') {
                     $xFiles[] = $file;
                 }
             }
@@ -64,11 +65,13 @@ class PXparseX extends PXparseDataFile
     }
 
     /**
-     * @param string $fileName
+     * @param string    $fileName
      *
-     * @return SecIndex|false
+     * @param PXparseDb $dparser
+     *
+     * @return false|SecIndex
      */
-    public function ParseFile($fileName)
+    public function ParseFile($fileName, PXparseDb $dparser)
     {
         $this->file = $fileName;
         if ( ! $this->Open()) {
@@ -77,20 +80,28 @@ class PXparseX extends PXparseDataFile
 
         $this->ParseDataFileHeader();
 
-        $name = $this->ReadNullTermString();
-        $index = new SecIndex($name);
+        $name = $this->ReadNullTermString(40);
         $this->Close();
-        array_pop($this->names); // 'Hint'
 
-        $index->fields = [];
-        foreach ($this->names as $name) {
-            $index->fields[] = $name;
+        $index = new SecIndex();
+        if ($name == '') {
+            /* X0n (single secondary key) */
+            $index->name = $dparser->names[$this->nums[0] - 1];
+        } else {
+            /* XGn */
+            $index->name = $name;
         }
         if ($this->names[0] == 'Sec Key') {
             /* single-field secondary key */
             // pdox doesn't preserve case of field name but mysql col names are case insensitive so should have no impact
-            $index->fields[0] = $index->name;
+            $index->fields[0] = $dparser->names[$this->nums[0] - 1];
+        } else {
+            $secKeyFields = count($this->names) - $dparser->table->numKeyFields - 1;
+            for ($i = 0; $i < $secKeyFields; $i++) {
+                $index->fields[] = $this->names[$i];
+            }
         }
+
         return $index;
     }
 

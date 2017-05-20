@@ -26,7 +26,4 @@ class SecIndex
     /** @var string[] */
     public $fields = [];
 
-    public function __Construct($name){
-        $this->name = $name;
-    }
-}
+ }

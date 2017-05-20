@@ -142,6 +142,7 @@ class FieldSpecsCombined
             $sql .= "'{$field->decPlaces}')";
             $sqls[] = $sql;
         }
-        return "\nINSERT INTO `{$sqlTableName}` VALUES\n" . implode(",\n", $sqls) . ";\n";
+        $fields = "`Table`, `Field`, `Type`, `Len`, `IsKey`, `Num`, `Required`, `Default`, `Picture`, `LoVal`, `HiVal`, `LookupTable`, `FillType`, `AutoFill`, `AutoLookup`, `AutoPic`, `Dunno1`, `DefDispLen`, `UseDispLen`, `Dunno2`, `DecPlaces`";
+        return "\nINSERT INTO `{$sqlTableName}` \n($fields) \nVALUES\n" . implode(",\n", $sqls) . ";\n";
     }
 }
